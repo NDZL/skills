@@ -4,7 +4,7 @@
 
 ## Wired-Workstation Connect
 
-[https://github.com/NDZL/skills/tree/main/workstation-connect/zwc-config](https://github.com/NDZL/skills-private-distri/tree/main/workstation-connect/zwc-config)
+[WSC Skill Private Repo](https://github.com/NDZL/skills-private-distri/tree/main/workstation-connect/zwc-config)
 
 ### Prompt example
 ```
