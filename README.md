@@ -1,8 +1,11 @@
 # SKILLS! (BETA, and subject to changes)
 
+- Beta Skills are distributed in a controlled way, through a private repo, by invitation only.
+- Open a new Issue on this repo to notify me of your interest and I'll get back to you.
+
 ## Wired-Workstation Connect
 
-https://github.com/NDZL/skills/tree/main/workstation-connect/zwc-config
+[https://github.com/NDZL/skills/tree/main/workstation-connect/zwc-config](https://github.com/NDZL/skills-private-distri/tree/main/workstation-connect/zwc-config)
 
 ### Prompt example
 ```
