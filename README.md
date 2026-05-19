@@ -1,7 +1,6 @@
-# SKILLS! (BETA, and subject to changes)
-
+# SKILLS!
 - Beta Skills are distributed in a controlled way, through a private repo, by invitation only.
-- Open a new Issue on this repo to notify me of your interest and I'll get back to you.
+- Open a new [Issue](https://github.com/NDZL/skills/issues) on this repo to notify me of your interest and I'll get back to you.
 
 ## Wired-Workstation Connect
 
