@@ -2,7 +2,7 @@
 - Beta Skills are distributed in a controlled way, through a private repo, by invitation only.
 - Open a new [Issue](https://github.com/NDZL/skills/issues) on this repo to notify me of your interest and I'll get back to you.
 
-## Wired-Workstation Connect
+## Workstation Connect
 
 [WSC Skill Private Repo](https://github.com/NDZL/skills-private-distri/tree/main/workstation-connect/zwc-config)
 
