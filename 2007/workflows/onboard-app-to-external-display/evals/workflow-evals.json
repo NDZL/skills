@@ -1,0 +1,10 @@
+{
+  "skill": "onboard-app-to-external-display",
+  "composes": ["reference/wsc/wsc-managed-config", "reference/wsc/wsc-external-display"],
+  "cases": [
+    { "type": "discovery", "prompt": "Make my app launch on the Workstation Connect external display", "expect_trigger": true },
+    { "type": "validate", "artifact": "managed-config.json", "assert": { "schema_valid": true } },
+    { "type": "compile", "target": "samples/wsc-sample/workflows/onboard-external-display/" },
+    { "type": "manual", "note": "DEVICE GATE: activity renders + receives input on the external display" }
+  ]
+}

@@ -1,0 +1,16 @@
+# Generation manifest — the ONE file authored by hand for this workflow skill.
+# Build INPUT (pointers, not copies): points at an end-to-end demo-app flow + the Layer-1 reference
+# skills this workflow COMPOSES. Committed with the skill; not loaded at runtime.
+layer: workflow
+job: "capture proof of delivery — scan tracking barcode + OCR label + confirmation photo → one PoD record"
+composes:                                            # → the Layer-1 reference skills reused (their references/ supply primitives)
+  - reference/aidc/aidc-decode-barcodes
+  - reference/aidc/aidc-recognize-text
+ground-truth:                                        # → path to the end-to-end task flow in the demo app
+  - samples/aidc-sample/workflows/proof-of-delivery/**
+eval:
+  type: compile-and-run
+  target: samples/aidc-sample/workflows/proof-of-delivery/
+  fixtures:
+    - input: fixtures/package-label.jpg
+      expect: { tracking: "1Z999AA10123456784", address_nonempty: true, photo_nonempty: true }

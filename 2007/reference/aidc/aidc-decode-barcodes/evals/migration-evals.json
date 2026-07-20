@@ -1,0 +1,9 @@
+{
+  "skill": "aidc-decode-barcodes",
+  "cases": [
+    {
+      "type": "compile",
+      "description": "3.x deps migrated to 4.0 group IDs (com.zebra.ai.sdk.vision + com.zebra.ai.models.vision) compiles against compileSdk 34"
+    }
+  ]
+}

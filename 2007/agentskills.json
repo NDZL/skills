@@ -1,0 +1,68 @@
+{
+  "name": "zebra-skills",
+  "version": "0.1.0",
+  "description": "AI coding-assistant skills for Zebra product SDKs — a two-layer hybrid (reference + workflows) fronted by a router.",
+  "layers": ["router", "reference", "workflow"],
+  "skills": [
+    {
+      "name": "zebra-skills-router",
+      "path": "router",
+      "layer": "router",
+      "description": "Entry advisor: pick the Zebra product, then route learn-an-API/feature (reference) vs do-a-task (workflow)."
+    },
+    {
+      "name": "aidc-decode-barcodes",
+      "path": "reference/aidc/aidc-decode-barcodes",
+      "layer": "reference",
+      "product": "ai-datacapture",
+      "paradigm": "native-sdk",
+      "lifecycle": "beta",
+      "description": "Decode barcodes with the AI Data Capture SDK (BarcodeDecoder / EntityTrackerAnalyzer on CameraX)."
+    },
+    {
+      "name": "datawedge-intent-output",
+      "path": "reference/datawedge/datawedge-intent-output",
+      "layer": "reference",
+      "product": "datawedge",
+      "paradigm": "intent",
+      "lifecycle": "beta",
+      "description": "Receive DataWedge scans in your app via the Intent Output plugin (action + extras + receiver + SET_CONFIG)."
+    },
+    {
+      "name": "oeminfo-device-identifiers",
+      "path": "reference/oeminfo/oeminfo-device-identifiers",
+      "layer": "reference",
+      "product": "oeminfo",
+      "paradigm": "content-provider",
+      "lifecycle": "beta",
+      "description": "Read Zebra device identifiers/properties (serial, IMEI, MAC) via the OEMInfo ContentProvider."
+    },
+    {
+      "name": "capture-proof-of-delivery",
+      "path": "workflows/capture-proof-of-delivery",
+      "layer": "workflow",
+      "product": "ai-datacapture",
+      "lifecycle": "beta",
+      "composes": ["reference/aidc/aidc-decode-barcodes", "reference/aidc/aidc-recognize-text"],
+      "description": "End-to-end proof-of-delivery capture: scan barcode + OCR label + confirmation photo → one PoD record."
+    },
+    {
+      "name": "onboard-app-to-external-display",
+      "path": "workflows/onboard-app-to-external-display",
+      "layer": "workflow",
+      "product": "wsc",
+      "lifecycle": "beta",
+      "composes": ["reference/wsc/wsc-managed-config", "reference/wsc/wsc-external-display"],
+      "description": "Onboard an app to run on a Workstation Connect external display — managed config + launch, end-to-end."
+    },
+    {
+      "name": "receive-scans-into-app",
+      "path": "workflows/receive-scans-into-app",
+      "layer": "workflow",
+      "product": "datawedge",
+      "lifecycle": "beta",
+      "composes": ["reference/datawedge/datawedge-intent-output"],
+      "description": "Get DataWedge scans flowing into an app from scratch — profile + Intent Output + receiver."
+    }
+  ]
+}

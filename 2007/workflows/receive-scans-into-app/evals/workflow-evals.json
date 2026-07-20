@@ -1,0 +1,13 @@
+{
+  "skill": "receive-scans-into-app",
+  "composes": ["reference/datawedge/datawedge-intent-output"],
+  "cases": [
+    { "type": "discovery", "prompt": "Get barcode scans from DataWedge into my Android app from scratch", "expect_trigger": true },
+    {
+      "type": "compile-and-run",
+      "target": "samples/datawedge-sample/workflows/receive-scans/",
+      "fixture": "fixtures/scan-broadcast.json",
+      "assert": { "received_value": "0123456789" }
+    }
+  ]
+}

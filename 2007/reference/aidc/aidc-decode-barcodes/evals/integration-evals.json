@@ -1,0 +1,13 @@
+{
+  "skill": "aidc-decode-barcodes",
+  "cases": [
+    { "type": "discovery", "prompt": "How do I decode barcodes with Zebra's AI Data Capture SDK on Android?", "expect_trigger": true },
+    { "type": "discovery", "prompt": "How do I scan with DataWedge?", "expect_trigger": false },
+    {
+      "type": "compile-and-run",
+      "target": "samples/aidc-sample/features/decode-barcodes/",
+      "fixture": "fixtures/code128.png",
+      "assert": { "decoded_value": "0123456789" }
+    }
+  ]
+}

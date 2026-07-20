@@ -1,0 +1,13 @@
+{
+  "skill": "oeminfo-device-identifiers",
+  "cases": [
+    { "type": "discovery", "prompt": "How do I get the serial number on a Zebra device?", "expect_trigger": true },
+    { "type": "discovery", "prompt": "How do I change the Wi-Fi config on a Zebra device?", "expect_trigger": false },
+    {
+      "type": "compile-and-run",
+      "target": "samples/oeminfo-sample/features/device-identifiers/",
+      "attribute": "content://oem_info/oem.zebra.secure/build_serial",
+      "assert": { "returns_nonempty": true }
+    }
+  ]
+}

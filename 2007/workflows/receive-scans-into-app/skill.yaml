@@ -1,0 +1,10 @@
+# Generation manifest — the ONE hand-authored file. Build INPUT (pointers, not copies); committed; not loaded at runtime.
+layer: workflow
+job: "get DataWedge scans flowing into an app — profile + Intent Output + receiver, end-to-end"
+composes:                                            # → the Layer-1 reference skill reused (incl. SET_CONFIG profile wiring)
+  - reference/datawedge/datawedge-intent-output
+ground-truth:
+  - samples/datawedge-sample/workflows/receive-scans/**
+eval:
+  type: compile-and-run
+  target: samples/datawedge-sample/workflows/receive-scans/

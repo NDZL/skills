@@ -1,0 +1,19 @@
+# Generation manifest — the ONE file authored by hand for this skill.
+# It is a build INPUT: its fields POINT at material that already exists (a sample module, doc anchors);
+# the generator reads those in place to (re)produce SKILL.md + references/ + evals/. It copies nothing.
+# Committed with the skill (regeneration source + provenance). NOT loaded by the assistant at runtime.
+layer: reference
+feature: "AIDC barcode decoding (on-device CV model)"
+paradigm: native-sdk
+ground-truth:                                        # → path to the feature's sample module (read in place)
+  - samples/aidc-sample/features/decode-barcodes/**
+references:                                          # → where the exact identifiers live (verbatim)
+  - docs/aidc/barcode.md#integration                 #   Gradle deps + analyzer/viewfinder classes
+  - docs/aidc/barcode.md#symbologies                 #   symbology enums + settings
+skip-siblings: [ aidc-recognize-text, aidc-recognize-products ]
+eval:
+  type: compile-and-run
+  target: samples/aidc-sample/features/decode-barcodes/
+  fixtures:
+    - input: fixtures/code128.png
+      expect: "0123456789"

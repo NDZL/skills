@@ -1,0 +1,13 @@
+{
+  "skill": "capture-proof-of-delivery",
+  "composes": ["reference/aidc/aidc-decode-barcodes", "reference/aidc/aidc-recognize-text"],
+  "cases": [
+    { "type": "discovery", "prompt": "Build a proof-of-delivery capture flow with AI DataCapture", "expect_trigger": true },
+    {
+      "type": "compile-and-run",
+      "target": "samples/aidc-sample/workflows/proof-of-delivery/",
+      "fixture": "fixtures/package-label.jpg",
+      "assert": { "tracking": "1Z999AA10123456784", "address_nonempty": true, "photo_nonempty": true }
+    }
+  ]
+}

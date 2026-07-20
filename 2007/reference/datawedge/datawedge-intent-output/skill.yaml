@@ -1,0 +1,13 @@
+# Generation manifest — the ONE hand-authored file. Build INPUT (pointers, not copies); committed; not loaded at runtime.
+layer: reference
+feature: "DataWedge Intent Output plugin"
+paradigm: intent
+ground-truth:                                         # → the feature's sample module (read in place)
+  - samples/datawedge-sample/features/intent-output/**
+references:                                           # → where exact identifiers live (verbatim)
+  - https://techdocs.zebra.com/datawedge/latest/guide/output/intent/
+  - https://techdocs.zebra.com/datawedge/latest/guide/api/setconfig/
+skip-siblings: [ datawedge-keystroke-output, datawedge-ip-output ]
+eval:
+  type: compile-and-run
+  target: samples/datawedge-sample/features/intent-output/

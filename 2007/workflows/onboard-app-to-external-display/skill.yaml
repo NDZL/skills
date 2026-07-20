@@ -1,0 +1,11 @@
+# Generation manifest — the ONE hand-authored file. Build INPUT (pointers, not copies); committed; not loaded at runtime.
+layer: workflow
+job: "onboard an app to run on a Workstation Connect (WSC) external display — managed config + launch, end-to-end"
+composes:                                            # → the Layer-1 reference skills reused
+  - reference/wsc/wsc-managed-config
+  - reference/wsc/wsc-external-display
+ground-truth:                                        # → the end-to-end task flow in the demo app
+  - samples/wsc-sample/workflows/onboard-external-display/**
+eval:
+  type: compile-and-run
+  target: samples/wsc-sample/workflows/onboard-external-display/

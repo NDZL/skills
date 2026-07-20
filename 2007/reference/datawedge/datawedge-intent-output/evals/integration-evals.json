@@ -1,0 +1,13 @@
+{
+  "skill": "datawedge-intent-output",
+  "cases": [
+    { "type": "discovery", "prompt": "How do I receive DataWedge scans in my app via intent?", "expect_trigger": true },
+    { "type": "discovery", "prompt": "How do I decode a barcode from a photo with the AI SDK?", "expect_trigger": false },
+    {
+      "type": "compile-and-run",
+      "target": "samples/datawedge-sample/features/intent-output/",
+      "fixture": "fixtures/scan-broadcast.json",
+      "assert": { "data_string": "0123456789" }
+    }
+  ]
+}

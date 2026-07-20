@@ -1,0 +1,12 @@
+# Generation manifest — the ONE hand-authored file. Build INPUT (pointers, not copies); committed; not loaded at runtime.
+layer: reference
+feature: "OEMInfo device identifiers (ContentProvider)"
+paradigm: content-provider
+ground-truth:
+  - samples/oeminfo-sample/features/device-identifiers/**
+references:
+  - https://techdocs.zebra.com/oeminfo/consume/
+skip-siblings: []            # OEMInfo is ONE capability; per-attribute variation is parametric (see attributes.md)
+eval:
+  type: compile-and-run
+  target: samples/oeminfo-sample/features/device-identifiers/
