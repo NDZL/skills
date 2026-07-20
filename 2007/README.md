@@ -6,8 +6,6 @@ AI coding-assistant **skills** for Zebra product SDKs — a **two-layer hybrid**
 - **`workflows/`** — *Layer 2*: one skill per **end-to-end task**, **composing** Layer-1 features (*"capture proof of delivery", "receive scans into an app"*).
 - **`router/`** — the **entry advisor**: picks the product and routes *learn-an-API/feature* ↔ *do-a-task*.
 
-> Architecture + rationale: **`SKILL-HYBRID-ARCHITECTURE.md`** (working notepad). This tree is a runnable illustration of that structure — the starter set for Developer Council review.
-
 ## Layout
 ```
 zebra-skills/
@@ -48,5 +46,4 @@ zebra-skills/
 ## Install / distribution
 Pull-based: point your AI assistant (Claude Code · Cursor · Copilot · Codex · Gemini) at this repo, or consume via the Zebra MCP server. One canonical `SKILL.md` per skill is projected to each assistant's native format.
 
-## Status
-🟡 Starter set (2–3 per layer) for **Developer Council** review. Grows over time. Open decisions tracked in `SKILL-HYBRID-ARCHITECTURE.md`.
+
