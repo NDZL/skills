@@ -4,7 +4,25 @@
 > Programmer's Guide (`device-matrix.md` §2.2). Watch Face Format limits are from
 > developer.android.com. **Per-device heap ceilings (`dalvik.vm.heapgrowthlimit`) and the
 > `ro.config.low_ram` flag were not found in any source consulted — §1.2 tells you to read them
-> off the device, and every budget in this file is expressed relative to what you read.**
+> off the device, and every budget in this file is expressed relative to what you read.** The
+> budget table in §2 is a **recommended starting point, not a quoted figure.**
+>
+> **Sources for this file** (full register: `device-matrix.md` §7):
+> - **Z1** WS50 Programmer's Guide — `"The RAM in the WS50 is limited to 1GB, which must be shared
+>   among the Linux kernel, Android app launcher, the Zebra software stack and other services"`;
+>   minimize concurrent apps; single-task UIs; camera formats
+>   https://techdocs.zebra.com/emdk-for-android/13-0/guide/ws50_programming/
+> - **Z4** WS501 spec sheet — 3 GB RAM / 32 GB Flash
+>   https://www.zebra.com/us/en/products/spec-sheets/mobile-computers/wearable/ws501.html
+> - **Z8** Zebra LifeGuard — WS50 as a non-GMS device (§7 here)
+>   https://techdocs.zebra.com/lifeguard/about/
+> - **W6** Optimize watch face memory usage — **10 MB ambient / 100 MB interactive**
+>   https://developer.android.com/training/wearables/wff/memory-usage
+> - **W1** Conserve power — share one database across app, tiles and complications
+>   https://developer.android.com/training/wearables/apps/power
+> - Manage your app's memory — https://developer.android.com/topic/performance/memory
+> - LeakCanary — https://square.github.io/leakcanary/
+> - Coil (image cache configuration) — https://coil-kt.github.io/coil/
 
 ---
 

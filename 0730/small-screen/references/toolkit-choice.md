@@ -1,10 +1,24 @@
 # Toolkit choice — XML Views or Compose
 
 > **Provenance.** Zebra's recommendation of `ConstraintLayout` "for better performance" is quoted
-> from the WS50 Programmer's Guide (`device-matrix.md`). Wear Compose versions and component names
-> are from developer.android.com (`device-matrix.md` §6.2). **No quantitative claim about Compose's
-> memory or startup cost on WS50/WS501 appears in any source consulted** — §3 therefore tells you
-> how to measure it rather than asserting a number.
+> from the WS50 Programmer's Guide. Wear Compose versions and component names are from
+> developer.android.com (`device-matrix.md` §6.2). **No quantitative claim about Compose's memory or
+> startup cost on WS50/WS501 appears in any source consulted** — §3 therefore tells you how to
+> measure it rather than asserting a number.
+>
+> **Sources for this file** (full register: `device-matrix.md` §7):
+> - **Z1** WS50 Programmer's Guide — `ConstraintLayout` recommendation, 1 GB RAM, Android 11 AOSP
+>   https://techdocs.zebra.com/emdk-for-android/13-0/guide/ws50_programming/
+> - **Z4** WS501 spec sheet — 3 GB RAM, QC2290
+>   https://www.zebra.com/us/en/products/spec-sheets/mobile-computers/wearable/ws501.html
+> - **W4** Wear Compose release notes — **1.6.0 (2026-03-25)**, Navigation3
+>   https://developer.android.com/jetpack/androidx/releases/wear-compose
+> - **W5** Wear Compose Material 3 — https://developer.android.com/jetpack/androidx/releases/wear-compose-m3
+> - **W9** Use Compose on Wear OS — https://developer.android.com/training/wearables/compose
+> - **W1** Conserve power — "Consume flows using Jetpack Compose"
+>   https://developer.android.com/training/wearables/apps/power
+> - Baseline Profiles — https://developer.android.com/topic/performance/baselineprofiles/overview
+> - Macrobenchmark — https://developer.android.com/topic/performance/benchmarking/macrobenchmark-overview
 
 ---
 

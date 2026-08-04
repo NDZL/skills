@@ -1,8 +1,23 @@
 # Screen and layout — designing *only* for a 230 dp canvas
 
-> **Provenance.** All Zebra numeric values are quoted in `device-matrix.md` §2 and §4 from the WS50
-> Programmer's Guide; all Wear OS values in `device-matrix.md` §6 from developer.android.com.
-> This file turns those numbers into layout rules. It adds no new device facts.
+> **Provenance.** All Zebra numeric values are quoted in `device-matrix.md` §2 and §4; all Wear OS
+> values in `device-matrix.md` §6. This file turns those numbers into layout rules and adds no new
+> device facts. The capacities in §2.2 are **derived arithmetic**, not quoted — verify them.
+>
+> **Sources for this file** (full register: `device-matrix.md` §7):
+> - **Z1** WS50 Programmer's Guide — canvas, touch zones, grid, padding, typography, colour,
+>   buttons, status/nav bar removal, "significant modifications to ... workflows"
+>   https://techdocs.zebra.com/emdk-for-android/13-0/guide/ws50_programming/
+> - **W3** Wear OS adaptive design foundations — 192 / 204–216 / 225 / 240+ dp, percentage margins,
+>   "never show less information", non-linear height under font scaling
+>   https://developer.android.com/design/ui/wear/guides/foundations/adaptive-design
+> - **W2** Develop for different screen sizes — `LARGE_DISPLAY_BREAKPOINT`, `TransformingLazyColumn`,
+>   `ScreenScaffold`, `@WearPreviewDevices`, Roborazzi
+>   https://developer.android.com/training/wearables/compose/screen-size
+> - **W11** Common layouts for scrolling apps
+>   https://developer.android.com/design/ui/wear/guides/foundations/common-layouts/apps-scrolling
+> - **W15** Horologist (`rememberResponsiveColumnPadding`) — https://github.com/google/horologist
+> - **Roborazzi** — https://github.com/takahirom/roborazzi
 
 ---
 

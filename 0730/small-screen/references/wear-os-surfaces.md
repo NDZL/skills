@@ -4,6 +4,31 @@
 > (Wear OS 6 / Wear Compose 1.6.0, retrieved 2026-07-30) and are collected in `device-matrix.md`
 > §6. **Read this file only if you are targeting Wear OS.** For a Zebra WS50/WS501 it is not
 > applicable — those devices run full Android AOSP with none of these surfaces.
+>
+> **Sources for this file** (full register: `device-matrix.md` §7):
+> - **W4** Wear Compose release notes — **1.6.0 (2026-03-25)**, Wear Compose Navigation3,
+>   `TransformingLazyColumn` reverseLayout/snapping
+>   https://developer.android.com/jetpack/androidx/releases/wear-compose
+> - **W5** Wear Compose Material 3 — https://developer.android.com/jetpack/androidx/releases/wear-compose-m3
+> - **W7** What's new in Wear OS 6 — M3 Expressive refresh; **supported on Wear OS 3+**
+>   https://android-developers.googleblog.com/2025/05/whats-new-in-wear-os-6.html
+> - **W8** Wear OS 6 features — https://developer.android.com/training/wearables/versions/6/features
+> - **W2** Develop for different screen sizes — `LARGE_DISPLAY_BREAKPOINT = 225`, scaffolds,
+>   `rememberResponsiveColumnPadding`
+>   https://developer.android.com/training/wearables/compose/screen-size
+> - **W3** Adaptive design foundations — 192 / 204–216 / 225 / 240+ dp, percentage margins,
+>   "never show less information", quality Tiers 1–3
+>   https://developer.android.com/design/ui/wear/guides/foundations/adaptive-design
+> - **W1** Conserve power — tiles/complications **≥ 2 h**, Data Layer discipline, ambient
+>   verification, Health Services https://developer.android.com/training/wearables/apps/power
+> - **W6** Watch Face Format memory — **10 MB ambient / 100 MB interactive**
+>   https://developer.android.com/training/wearables/wff/memory-usage
+> - **W12** Tiles for different screen sizes — https://developer.android.com/training/wearables/tiles/screen-size
+> - **W9** Use Compose on Wear OS — https://developer.android.com/training/wearables/compose
+> - **W10** Migrate Material 2.5 → Material 3 — https://developer.android.com/training/wearables/compose/migrate-to-material3
+> - **W14** Compose for Wear OS codelab — https://developer.android.com/codelabs/compose-for-wear-os
+> - **W15** Horologist — https://github.com/google/horologist
+> - **W16** ComposeStarter sample — https://github.com/android/wear-os-samples/tree/main/ComposeStarter
 
 ---
 

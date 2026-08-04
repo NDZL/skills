@@ -2,6 +2,23 @@
 
 > **Provenance.** Each entry cites the reference file holding the underlying quoted evidence.
 > This file introduces no new device facts; it is the refusal list.
+>
+> **Sources behind the refusals** (full register: `device-matrix.md` §7):
+> - **Z1** WS50 Programmer's Guide — `"Its two-inch display and 1GB RAM require significant
+>   modifications to existing apps, UIs and workflows."`; the 48 dp floor and the conflicting
+>   30 × 30 dp figure; 12 pt text floor; avoid blue; use Full Black; avoid split-screen; the
+>   **don't-whitelist-from-battery-optimization** instruction; `"No GMS capability"`
+>   https://techdocs.zebra.com/emdk-for-android/13-0/guide/ws50_programming/
+> - **Z8** Zebra LifeGuard — WS50 confirmed non-GMS
+>   https://techdocs.zebra.com/lifeguard/about/
+> - **Q1** Qualcomm QCM2290 — quad Cortex-A53, no big cores (§4)
+>   https://www.qualcomm.com/internet-of-things/products/q2-series/qcm2290
+> - **W1** Conserve power — screen/network/GPS impact ranking, tiles **≥ 2 h**, wakelock rules
+>   https://developer.android.com/training/wearables/apps/power
+> - **W3** Adaptive design foundations — the 192 dp floor referenced in §8 item 3
+>   https://developer.android.com/design/ui/wear/guides/foundations/adaptive-design
+> - **W5** Wear Compose Material 3 — the correct artifact vs phone Material 3
+>   https://developer.android.com/jetpack/androidx/releases/wear-compose-m3
 
 Every item here is something a competent phone developer does *correctly on a phone*. That is what
 makes them dangerous: they arrive as good habits.

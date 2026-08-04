@@ -2,9 +2,30 @@
 
 > **Provenance.** Zebra battery capacities, the 10-hour figure and the power-practice bullets are
 > quoted verbatim from the WS50 Programmer's Guide and spec sheets (`device-matrix.md` §2.3).
-> Wear OS thresholds, the impact table and the tooling commands are from
-> developer.android.com/training/wearables/apps/power. **The mA figures in §1.2 are arithmetic on
-> the quoted capacities, not measured values** — measure your own app (§7).
+> Wear OS thresholds, the impact table and the tooling commands are from **W1** below. **The mA
+> figures in §1.2 are arithmetic on the quoted capacities, not measured values** — measure your own
+> app (§7).
+>
+> **Sources for this file** (full register: `device-matrix.md` §7):
+> - **Z1** WS50 Programmer's Guide — `"Set screen brightness to the minimum level for effective
+>   use"`, `"Set a short screen timeout interval (10-15 seconds)"`, `"Set the device to wake only
+>   when touching the scan trigger or display"`, `"Use 'Full Black'"`, and the Doze instruction:
+>   **don't disable or whitelist apps from battery optimization**
+>   https://techdocs.zebra.com/emdk-for-android/13-0/guide/ws50_programming/
+> - **Z2** WS50 spec sheet — `"Standard battery: 800 mAh"` / `"High-capacity battery: 1300 mAh"`,
+>   `"Battery life: Up to 10 hours continuous operation"`
+>   https://www.zebra.com/us/en/products/spec-sheets/mobile-computers/wearable/ws50.html
+> - **Z4** WS501 spec sheet — `"5 Wh; 1300 mAh; PowerPrecision; Hot Swap"`
+>   https://www.zebra.com/us/en/products/spec-sheets/mobile-computers/wearable/ws501.html
+> - **W1** Conserve power and battery — **the primary Wear source for this file.** The impact table,
+>   **4.44 %/h** and **3.2 %/h**, tiles/complications **≥ 2 h**, Data Layer discipline, wakelock
+>   rules, Health Services, `ExerciseClient` "every minute or two", every `dumpsys` command here,
+>   Battery Historian / Power Profiler / Perfetto guidance
+>   https://developer.android.com/training/wearables/apps/power
+> - **W13** Excessive battery usage (App quality) — corroborates the %/hour framing
+>   https://developer.android.com/topic/performance/vitals/excessive-battery-usage
+> - Battery Historian — https://github.com/google/battery-historian
+> - Perfetto UI — https://ui.perfetto.dev
 
 ---
 

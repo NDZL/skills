@@ -154,3 +154,30 @@ beta:
   **no** density bucket other than `xhdpi` for a Zebra target.
 
 Every eval must run on **real hardware**; an emulator satisfies the layout assertions only.
+
+## Sources
+
+**The complete source register is `references/device-matrix.md` §7**, which maps every source to the
+specific claims it establishes, tags each **[P]**rimary or **[S]**econdary, and lists the seven
+known gaps in §7.5. Each reference file also carries the subset of URLs behind its own claims, so a
+single-file load stays self-contained.
+
+Primary sources, all retrieved **2026-07-30**:
+
+| | Source |
+|---|---|
+| **Z1** | **WS50 Programmer's Guide** (EMDK for Android 13-0) — the most-quoted source in this skill: canvas, density, touch zones, grid, typography, colour, RAM, buttons, camera, power practices, non-GMS · https://techdocs.zebra.com/emdk-for-android/13-0/guide/ws50_programming/ |
+| **Z2** | WS50 spec sheet · https://www.zebra.com/us/en/products/spec-sheets/mobile-computers/wearable/ws50.html |
+| **Z4** | WS501 spec sheet · https://www.zebra.com/us/en/products/spec-sheets/mobile-computers/wearable/ws501.html |
+| **Z8** | Zebra LifeGuard for Android (WS50 non-GMS) · https://techdocs.zebra.com/lifeguard/about/ |
+| **Z12** | Zebra supported Android versions · https://www.zebra.com/android-versions |
+| **Q1** | Qualcomm QCM2290 (quad Cortex-A53, Adreno 702) · https://www.qualcomm.com/internet-of-things/products/q2-series/qcm2290 |
+| **W1** | Wear OS — Conserve power and battery · https://developer.android.com/training/wearables/apps/power |
+| **W2** | Wear OS — Develop for different screen sizes · https://developer.android.com/training/wearables/compose/screen-size |
+| **W3** | Wear OS — Adaptive design foundations · https://developer.android.com/design/ui/wear/guides/foundations/adaptive-design |
+| **W4** | Wear Compose release notes (1.6.0) · https://developer.android.com/jetpack/androidx/releases/wear-compose |
+| **W6** | Watch Face Format memory limits · https://developer.android.com/training/wearables/wff/memory-usage |
+
+**Re-verify before a release.** Zebra BSP/LifeGuard levels, Z12, and `androidx.wear.compose`
+versions all move independently of this skill. When they do, update `device-matrix.md` §7 first —
+every other file cites it.

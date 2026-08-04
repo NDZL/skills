@@ -363,35 +363,91 @@ fun isLargeDisplay() =
 
 ---
 
-## 7. Sources
+## 7. Sources — the full register
 
-Zebra:
+All retrieved **2026-07-30** unless noted. **[P]** = primary source, quoted verbatim somewhere in
+this skill. **[S]** = secondary/corroborating.
 
-- WS50 Programmer's Guide — EMDK for Android 13-0 —
-  https://techdocs.zebra.com/emdk-for-android/13-0/guide/ws50_programming/
-- WS50 Android Wearable Computer spec sheet —
-  https://www.zebra.com/us/en/products/spec-sheets/mobile-computers/wearable/ws50.html
-- WS501 Android Wearable Computer spec sheet —
-  https://www.zebra.com/us/en/products/spec-sheets/mobile-computers/wearable/ws501.html
-- Zebra LifeGuard for Android — https://techdocs.zebra.com/lifeguard/about/
-- Android 13+ upgrade notes — https://techdocs.zebra.com/lifeguard/a13/
-- Supported Android versions — https://www.zebra.com/android-versions
+### 7.1 Zebra — WS50 / WS501
 
-Wear OS:
+| # | Source | What it establishes here |
+|---|---|---|
+| Z1 **[P]** | **WS50 Programmer's Guide**, EMDK for Android 13-0 — https://techdocs.zebra.com/emdk-for-android/13-0/guide/ws50_programming/ | **The single most important source in this skill.** Display size/resolution/density, the 230×230 dp canvas, 1 GB RAM sharing model, all four touch-zone statements (§4), 8dp/4dp grid, padding, component gap, typography, colour, buttons, camera formats, LED AIDL, SIP, power practices, "No GMS capability", status/nav bar removal |
+| Z2 **[P]** | WS50 spec sheet (HTML) — https://www.zebra.com/us/en/products/spec-sheets/mobile-computers/wearable/ws50.html | Battery variants (800/1300 mAh), 10-hour figure, 1 GB/8 GB, Android 11 AOSP |
+| Z3 **[S]** | WS50 spec sheet (PDF) — https://www.zebra.com/content/dam/zebra_dam/en/spec-sheets/ws50-specification-sheet-en-us.pdf | Corroborates Z2. *Note: this PDF did not extract as readable text when fetched; figures were taken from Z1/Z2 instead.* |
+| Z4 **[P]** | WS501 spec sheet (HTML) — https://www.zebra.com/us/en/products/spec-sheets/mobile-computers/wearable/ws501.html | `"Qualcomm® QC2290"`, `"3 GB RAM/32 GB Flash"`, `"2 in. AMOLED 460 x 460 ... optically bonded"`, `"5 Wh; 1300 mAh; PowerPrecision; Hot Swap"`, dimensions/weight, Wi-Fi 6, BT 5.3, SE4770, the `"visit: www.zebra.com/android-versions"` OS statement |
+| Z5 **[S]** | WS501 spec sheet (PDF) — https://www.zebra.com/content/dam/zebra_dam/en/spec-sheets/ws501-spec-sheet-en-us.pdf | Corroborates Z4 |
+| Z6 **[S]** | WS501 product page — https://www.zebra.com/us/en/products/mobile-computers/wearable-computers/ws5x-series/ws501.html | Positioning; "triple the RAM, quadruple the Flash" vs WS50 |
+| Z7 **[S]** | WS50 RFID spec sheet — https://www.zebra.com/us/en/products/spec-sheets/mobile-computers/wearable/ws50-rfid.html | RFID variant; not otherwise used |
+| Z8 **[P]** | Zebra LifeGuard for Android — https://techdocs.zebra.com/lifeguard/about/ | WS50 listed as a **non-GMS** device; non-GMS update caveats |
+| Z9 **[S]** | LifeGuard Android 13+ upgrade — https://techdocs.zebra.com/lifeguard/a13/ | WS50 fleets may be past Android 11 → §2.2 "read it, don't assume" |
+| Z10 **[S]** | LifeGuard security & downloads — https://www.zebra.com/us/en/support-downloads/lifeguard-security.html | Device support lists |
+| Z11 **[S]** | WS50 support & downloads — https://www.zebra.com/us/en/support-downloads/mobile-computers/wearable-computers/ws50.html | BSP/LifeGuard releases per device |
+| Z12 **[P]** | Supported Android versions — https://www.zebra.com/android-versions | The authority Z4 defers to for the WS501 OS version (`UNVERIFIED` here) |
 
-- Conserve power and battery — https://developer.android.com/training/wearables/apps/power
-- Develop for different screen sizes —
-  https://developer.android.com/training/wearables/compose/screen-size
-- Adaptive design foundations —
-  https://developer.android.com/design/ui/wear/guides/foundations/adaptive-design
-- Wear Compose release notes —
-  https://developer.android.com/jetpack/androidx/releases/wear-compose
-- Wear Compose Material 3 —
-  https://developer.android.com/jetpack/androidx/releases/wear-compose-m3
-- Optimize watch face memory usage —
-  https://developer.android.com/training/wearables/wff/memory-usage
-- What's new in Wear OS 6 —
-  https://android-developers.googleblog.com/2025/05/whats-new-in-wear-os-6.html
+### 7.2 Qualcomm — the WS501 SoC
 
-**Retrieved 2026-07-30.** Re-verify before a release: Zebra BSP/LifeGuard levels and
-`androidx.wear.compose` versions both move.
+Z4 names only `"Qualcomm® QC2290"`. These establish the QCM2290/QCS2290 figures in
+`cpu-performance.md` §1.1 — **quad-core Cortex-A53 up to 2.0 GHz, Adreno 702 @ 845 MHz, OpenGL ES
+3.1 / OpenCL 2.0 / Vulkan 1.1.** The part-number mapping is an inference; see §7.5.
+
+| # | Source | |
+|---|---|---|
+| Q1 **[P]** | QCM2290 product page — https://www.qualcomm.com/internet-of-things/products/q2-series/qcm2290 | CPU/GPU configuration |
+| Q2 **[P]** | QCS/QCM2290 SoC product brief (PDF) — https://www.qualcomm.com/content/dam/qcomm-martech/dm-assets/documents/qcs-qcm2290-soc-product-brief_87-28731-1.pdf | "Powerful CPU and GPU in its tier"; graphics API levels |
+| Q3 **[S]** | QCS2290 page — https://qualcomm.com/products/technology/processors/application-processors/qcs2290 | Entry-tier sibling part |
+| Q4 **[S]** | Application Processors Selector Guide (PDF) — https://www.qualcomm.com/content/dam/qcomm-martech/dm-assets/documents/application-processors-selection-guide.pdf | Tier positioning |
+
+### 7.3 Wear OS / Android
+
+| # | Source | What it establishes here |
+|---|---|---|
+| W1 **[P]** | Conserve power and battery — https://developer.android.com/training/wearables/apps/power | The impact table, **4.44 %/h** and **3.2 %/h** thresholds, tiles/complications **≥ 2 h** refresh, Data Layer discipline, wakelock rules, Health Services / `ExerciseClient` "every minute or two", all `dumpsys` commands, Battery Historian / Power Profiler / Perfetto guidance |
+| W2 **[P]** | Develop for different screen sizes — https://developer.android.com/training/wearables/compose/screen-size | `LARGE_DISPLAY_BREAKPOINT = 225`, `rememberResponsiveColumnPadding`, `TransformingLazyColumn`/`ScreenScaffold`/`AppScaffold`, `@WearPreviewDevices`, `@WearPreviewFontScales`, Roborazzi test shape and `tolerance = 0.02f` |
+| W3 **[P]** | Adaptive design foundations — https://developer.android.com/design/ui/wear/guides/foundations/adaptive-design | **192 / 204–216 / 225 / 240+ dp** ranges, percentage margins, "a larger screen must never show less information", non-linear height under font scaling, quality Tiers 1–3 |
+| W4 **[P]** | Wear Compose release notes — https://developer.android.com/jetpack/androidx/releases/wear-compose | **1.6.0 (2026-03-25)**, Wear Compose Navigation3, `TransformingLazyColumn` reverseLayout/snapping |
+| W5 **[P]** | Wear Compose Material 3 — https://developer.android.com/jetpack/androidx/releases/wear-compose-m3 | M3 artifact; Material 3 Expressive components |
+| W6 **[P]** | Optimize watch face memory usage — https://developer.android.com/training/wearables/wff/memory-usage | Watch Face Format **10 MB ambient / 100 MB interactive** |
+| W7 **[P]** | What's new in Wear OS 6 — https://android-developers.googleblog.com/2025/05/whats-new-in-wear-os-6.html | Wear OS 6 M3 Expressive refresh; **M3 Expressive supported on Wear OS 3+** |
+| W8 **[S]** | Wear OS 6 features — https://developer.android.com/training/wearables/versions/6/features | Platform feature set |
+| W9 **[S]** | Use Compose on Wear OS — https://developer.android.com/training/wearables/compose | Toolkit orientation |
+| W10 **[S]** | Migrate Material 2.5 → Material 3 — https://developer.android.com/training/wearables/compose/migrate-to-material3 | Migration path |
+| W11 **[S]** | Common layouts, scrolling apps — https://developer.android.com/design/ui/wear/guides/foundations/common-layouts/apps-scrolling | Canonical list layouts |
+| W12 **[S]** | Develop tiles for different screen sizes — https://developer.android.com/training/wearables/tiles/screen-size | Tile responsiveness |
+| W13 **[S]** | Excessive battery usage (App quality) — https://developer.android.com/topic/performance/vitals/excessive-battery-usage | Corroborates the %/hour framing |
+| W14 **[S]** | Compose for Wear OS codelab — https://developer.android.com/codelabs/compose-for-wear-os | Worked example |
+| W15 **[S]** | Horologist — https://github.com/google/horologist | `rememberResponsiveColumnPadding` |
+| W16 **[S]** | ComposeStarter sample — https://github.com/android/wear-os-samples/tree/main/ComposeStarter | Reference implementation |
+
+### 7.4 Tooling referenced by this skill
+
+Not device ground truth — these back the *measurement* instructions:
+
+- Manage your app's memory — https://developer.android.com/topic/performance/memory
+- Baseline Profiles — https://developer.android.com/topic/performance/baselineprofiles/overview
+- Macrobenchmark — https://developer.android.com/topic/performance/benchmarking/macrobenchmark-overview
+- Perfetto UI — https://ui.perfetto.dev
+- Battery Historian — https://github.com/google/battery-historian
+- LeakCanary — https://square.github.io/leakcanary/
+- Roborazzi — https://github.com/takahirom/roborazzi
+
+### 7.5 Known gaps in this register
+
+Stated plainly so nobody mistakes an inference for a quote:
+
+1. **WS501 Android version** — Z4 defers to Z12; not pinned here. `UNVERIFIED`.
+2. **WS501 GMS status** — not stated in Z4/Z5/Z6. Assume non-GMS by line precedent (Z8), confirm on
+   device (§2.7). `UNVERIFIED`.
+3. **WS50 CPU** — named in no consulted source. `UNVERIFIED`.
+4. **`QC2290` → `QCM2290` mapping** — Z4's `"QC2290"` is not an exact Qualcomm part name. Q1–Q4
+   cover the QCM2290/QCS2290 IoT parts. Highly likely, **not confirmed**; verify via
+   `/proc/cpuinfo` (§5).
+5. **`dalvik.vm.heapgrowthlimit`, `ro.config.low_ram`** — not documented for either device. Read
+   from hardware (§5).
+6. **Display refresh rate** — not stated for either device. `cpu-performance.md` §2 assumes 60 Hz
+   and gives the confirming command.
+7. **Z3 (WS50 spec PDF)** did not extract as readable text on fetch; its figures were taken from
+   Z1/Z2 instead.
+
+**Re-verify before a release.** Zebra BSP/LifeGuard levels, the supported-Android-versions page
+(Z12) and `androidx.wear.compose` versions (W4/W5) all move independently of this document.

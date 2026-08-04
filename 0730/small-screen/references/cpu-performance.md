@@ -4,7 +4,31 @@
 > (`device-matrix.md` §2.2). Qualcomm's published figures for the IoT part of that number
 > (QCM2290 / QCS2290) are quoted in §1. **The WS50's CPU is not stated in any source consulted —
 > it is `UNVERIFIED`.** The display refresh rate is `UNVERIFIED` for both devices; §2 assumes
-> 60 Hz and tells you how to confirm it. Wear OS CPU guidance is from developer.android.com.
+> 60 Hz and tells you how to confirm it. **The frame-budget split in §2 and the A53-vs-phone-core
+> ratios in §1.2 are engineering estimates, not published figures** — measure your own app.
+>
+> **Sources for this file** (full register: `device-matrix.md` §7):
+> - **Z4** WS501 spec sheet — `"Qualcomm® QC2290"`
+>   https://www.zebra.com/us/en/products/spec-sheets/mobile-computers/wearable/ws501.html
+> - **Q1** Qualcomm QCM2290 — quad-core Cortex-A53 up to 2.0 GHz, Adreno 702
+>   https://www.qualcomm.com/internet-of-things/products/q2-series/qcm2290
+> - **Q2** QCS/QCM2290 SoC product brief (PDF) — Adreno 702 @ 845 MHz, OpenGL ES 3.1 / OpenCL 2.0 /
+>   Vulkan 1.1
+>   https://www.qualcomm.com/content/dam/qcomm-martech/dm-assets/documents/qcs-qcm2290-soc-product-brief_87-28731-1.pdf
+> - **Q3** QCS2290 — https://qualcomm.com/products/technology/processors/application-processors/qcs2290
+> - **Z1** WS50 Programmer's Guide — `ConstraintLayout` for performance, "Minimize animations",
+>   camera API2 + supported formats
+>   https://techdocs.zebra.com/emdk-for-android/13-0/guide/ws50_programming/
+> - **W1** Conserve power — high CPU ranked **High**; "Consume flows using Jetpack Compose"; batch
+>   to maximise idle; `dumpsys` commands; Perfetto
+>   https://developer.android.com/training/wearables/apps/power
+> - Baseline Profiles — https://developer.android.com/topic/performance/baselineprofiles/overview
+> - Macrobenchmark — https://developer.android.com/topic/performance/benchmarking/macrobenchmark-overview
+> - Perfetto UI — https://ui.perfetto.dev
+>
+> ⚠ **The `QC2290` → `QCM2290` mapping is an inference**, not a confirmed identity — see
+> `device-matrix.md` §7.5 item 4. Confirm with `/proc/cpuinfo` (§1.3) before depending on a GPU API
+> level.
 
 ---
 
