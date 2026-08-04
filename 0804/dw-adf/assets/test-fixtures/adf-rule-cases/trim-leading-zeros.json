@@ -1,0 +1,53 @@
+{
+  "fixture": "trim-leading-zeros",
+  "reviewed": "2026-08-04",
+  "datawedge_version_scope": "15.0",
+  "validation_level": "inspection",
+  "note": "Expected output derived from documented action semantics, not device-verified.",
+  "cases": [
+    { "input": "000000123456", "expected_data_string": "123456" },
+    { "input": "123456", "expected_data_string": "123456" },
+    { "input": "000000", "expected_data_string": "" }
+  ],
+  "set_config": {
+    "intent_action": "com.symbol.datawedge.api.ACTION",
+    "extra": "com.symbol.datawedge.api.SET_CONFIG",
+    "SEND_RESULT": "LAST_RESULT",
+    "COMMAND_IDENTIFIER": "AdfIntentDemo-adf-1",
+    "bundle": {
+      "PROFILE_NAME": "AdfIntentDemo",
+      "PROFILE_ENABLED": "true",
+      "CONFIG_MODE": "UPDATE",
+      "PLUGIN_CONFIG": [
+        {
+          "PLUGIN_NAME": "ADF",
+          "OUTPUT_PLUGIN_NAME": "INTENT",
+          "RESET_CONFIG": "false",
+          "PARAM_LIST": {
+            "adf_enabled": "true",
+            "ADF_RULE": {
+              "name": "TrimLeadingZeros",
+              "enabled": "true",
+              "alldevices": "false",
+              "string": "",
+              "string_pos": "0",
+              "string_len": "0",
+              "DEVICES": [
+                {
+                  "device_id": "BARCODE",
+                  "enabled": "true",
+                  "alldecoders": "true",
+                  "all_label_ids": "true"
+                }
+              ],
+              "ACTIONS": [
+                { "type": "TRIM_LEFT_ZEROS" },
+                { "type": "SEND_REMAINING" }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

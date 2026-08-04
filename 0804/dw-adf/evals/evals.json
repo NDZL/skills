@@ -1,0 +1,491 @@
+{
+  "skill_name": "dw-adf",
+  "files_base": "skill_root",
+  "reviewed": "2026-08-04",
+  "review": {
+    "timing": "now",
+    "status": "approved",
+    "approved_eval_ids": [
+      "adf-route-intent-output",
+      "adf-route-handoff-profile-setup",
+      "adf-rule-replace-string-bundle",
+      "adf-criteria-decoder-scoped-rule",
+      "adf-unknown-multi-rule-ordering",
+      "adf-unknown-rfid-source",
+      "adf-offline-no-shell",
+      "adf-offline-no-network",
+      "adf-independent-install",
+      "adf-release-metadata",
+      "adf-antipattern-reset-config-wipe",
+      "adf-antipattern-competing-owner",
+      "adf-host-contract-result-receiver",
+      "adf-async-completion-order",
+      "adf-freshness-getconfig-readback",
+      "adf-device-verified-write-shape",
+      "adf-antipattern-rule-order-shadowing",
+      "adf-antipattern-ownership-crash",
+      "adf-antipattern-result-info-success",
+      "adf-antipattern-unbounded-readback",
+      "adf-positional-reorder-outcome"
+    ],
+    "regression_record": "Six evaluations were added on 2026-08-04 after live device validation on a Zebra TC701 / Android 15 / DataWedge 15.0.73 found five real defects in previously inspection-only content: adf-device-verified-write-shape, adf-antipattern-rule-order-shadowing, adf-antipattern-ownership-crash, adf-antipattern-result-info-success, adf-antipattern-unbounded-readback, and adf-positional-reorder-outcome. Each encodes a failure observed on hardware. Ordering disclosure: the defects were found and corrected during live debugging, so these evaluations were written immediately after each fix rather than as failing-first tests. Each one was, however, demonstrably failing on the pre-fix build - the observed failure evidence is recorded in every case. The user approved this backport explicitly; the skill remains an unreleased draft at 1.0.0-beta.1, so no version increment is owed.",
+    "review_detail_record": "Evaluations 1-4 (adf-route-intent-output, adf-route-handoff-profile-setup, adf-rule-replace-string-bundle, adf-criteria-decoder-scoped-rule) were presented individually with full prompt, expected output, assertions, and files, and approved one at a time. At evaluation 4 the user selected bulk approval for all remaining evaluations as scoped in the portfolio overview (ID, category, purpose). Evaluations 5-15 therefore carry explicit user approval at overview level, not assertion-level review. Assertion-level review of evaluations 5-15 is disclosed as remaining work.",
+    "execution_status": "not_executed",
+    "execution_note": "No evaluation in this portfolio has been executed as a scripted test; they are authored acceptance criteria, not harness results. However, the six regression evaluations added on 2026-08-04 encode behaviour actually observed on a Zebra TC701 / Android 15 / DataWedge 15.0.73: each failure they guard was reproduced on hardware, and each fix was confirmed on hardware. Achieved validation level for the skill is therefore 'device' for the ADF write shape, rule ordering, success detection, readback parsing, and the end-to-end transformation, and 'inspection' for everything else. See references/sources.md."
+  },
+  "coverage": {
+    "positive-routing": ["adf-route-intent-output"],
+    "negative-routing": ["adf-route-handoff-profile-setup"],
+    "supported-outcome": [
+      "adf-rule-replace-string-bundle",
+      "adf-criteria-decoder-scoped-rule",
+      "adf-device-verified-write-shape",
+      "adf-positional-reorder-outcome"
+    ],
+    "unsupported-or-unknown": [
+      "adf-unknown-multi-rule-ordering",
+      "adf-unknown-rfid-source"
+    ],
+    "offline-no-shell": ["adf-offline-no-shell"],
+    "offline-no-network": ["adf-offline-no-network"],
+    "independent-installation": ["adf-independent-install"],
+    "release-versioning": ["adf-release-metadata"],
+    "code-validation": [
+      "adf-rule-replace-string-bundle",
+      "adf-host-contract-result-receiver"
+    ],
+    "fixture-validation": [
+      "adf-criteria-decoder-scoped-rule",
+      "adf-positional-reorder-outcome"
+    ],
+    "anti-pattern": [
+      "adf-antipattern-reset-config-wipe",
+      "adf-antipattern-competing-owner",
+      "adf-freshness-getconfig-readback",
+      "adf-antipattern-rule-order-shadowing",
+      "adf-antipattern-ownership-crash",
+      "adf-antipattern-result-info-success",
+      "adf-antipattern-unbounded-readback"
+    ],
+    "host-contract": ["adf-host-contract-result-receiver"],
+    "async-completion-order": [
+      "adf-async-completion-order",
+      "adf-freshness-getconfig-readback"
+    ]
+  },
+  "coverage_not_applicable": {
+    "manual-fallback": "This skill ships no scripts and makes no live checks, so no script fallback route exists to evaluate. The text-first manual procedure is covered by adf-offline-no-shell.",
+    "starter-validation": "No assets/starters/ is bundled. A runnable starter was deliberately excluded because no Android SDK or Gradle toolchain was available to clean-build it, and an unverified runnable claim is not permitted.",
+    "material-update": "Not applicable to a first release. This skill has never been released, so no released-skill change classification exists."
+  },
+  "evals": [
+    {
+      "id": "adf-route-intent-output",
+      "category": "positive-routing",
+      "purpose": "Confirms the skill activates on its core trigger instead of the agent free-handing ADF key names from memory.",
+      "prompt": "Scans from my Zebra TC22 arrive in my app as 000000123456. I need them to arrive as 123456. My DataWedge profile already delivers scans to my app via intent output.",
+      "expected_output": "Routes to dw-adf and produces a SET_CONFIG bundle carrying PLUGIN_NAME=ADF and OUTPUT_PLUGIN_NAME=INTENT, with an ADF_RULE whose ACTIONS are TRIM_LEFT_ZEROS then SEND_REMAINING. Declares DataWedge 15.0 as the reviewed scope, reports the TC22 device model as unknown - verify on target, and names the GET_CONFIG + PROCESS_PLUGIN_NAME readback as the verification step.",
+      "assertions": [
+        "Output contains PLUGIN_NAME set to ADF and OUTPUT_PLUGIN_NAME set to INTENT.",
+        "The ACTIONS list ends with SEND_REMAINING.",
+        "TRIM_LEFT_ZEROS is present and precedes the terminal send action.",
+        "Response states DataWedge 15.0 as the reviewed version scope.",
+        "Device model is reported as unknown - verify on target, not assumed supported.",
+        "Verification via GET_CONFIG with PROCESS_PLUGIN_NAME is named.",
+        "Response does not claim device or build evidence."
+      ],
+      "files": [
+        "SKILL.md",
+        "references/api-patterns.md",
+        "assets/test-fixtures/adf-rule-cases/trim-leading-zeros.json"
+      ]
+    },
+    {
+      "id": "adf-route-handoff-profile-setup",
+      "category": "negative-routing",
+      "purpose": "Confirms the skill declines adjacent DataWedge work rather than absorbing it and overlapping the DataWedge profile skill.",
+      "prompt": "Set up a DataWedge profile for my app from scratch - create the profile, associate my package, enable the barcode plugin with Code 128 only, and wire up SOFT_SCAN_TRIGGER so I can scan from a button.",
+      "expected_output": "Declines as outside capability and hands off to the DataWedge profile and intent-output skill. Emits no APP_LIST, barcode/decoder plugin parameters, or SOFT_SCAN_TRIGGER guidance. May note that an ADF rule on the Intent output plugin is what dw-adf would own afterwards.",
+      "assertions": [
+        "Response explicitly declines or hands off rather than answering the profile-setup request.",
+        "Output contains no APP_LIST configuration.",
+        "Output contains no SOFT_SCAN_TRIGGER guidance.",
+        "Output contains no barcode-plugin or decoder-enable parameters.",
+        "The hand-off target is named as the DataWedge profile / intent-output skill.",
+        "No invented profile-creation key names appear."
+      ],
+      "files": ["SKILL.md", "references/usage-patterns.md"]
+    },
+    {
+      "id": "adf-rule-replace-string-bundle",
+      "category": "supported-outcome",
+      "purpose": "Proves the primary code-producing outcome emits a correctly nested bundle tree. UPDATED after device validation: ACTIONS/DEVICES/DECODERS/LABEL_IDS are children of the RULE BUNDLE, and rule bundles are elements of an ordered PARAM_LIST list - there is no ADF_RULE wrapper on the write path.",
+      "prompt": "Using the bundled Kotlin, strip every hyphen out of scanned data before it reaches my app over intent output. Profile is WarehousePick, and it already has two other ADF rules I must not lose.",
+      "expected_output": "Uses AdfIntentOutputConfigurator with AdfAction.replaceString(\"-\", \"\") then AdfAction.sendRemaining(). ACTIONS is nested inside ADF_RULE. RESET_CONFIG is \"false\" and CONFIG_MODE is \"UPDATE\" so the two sibling rules survive. Boolean-valued keys are quoted strings. action_param_1 is \"-\" and action_param_2 is empty.",
+      "assertions": [
+        "ACTIONS, DEVICES, DECODERS and LABEL_IDS appear as children of the rule bundle.",
+        "PARAM_LIST is an ordered list of rule bundles, with no ADF_RULE wrapper.",
+        "adf_enabled is set at plug-in level, beside PARAM_LIST.",
+        "RESET_CONFIG is set to \"false\" so sibling rules are preserved.",
+        "Because RESET_CONFIG is false, the response warns that the new rule lands AFTER existing rules and may be shadowed by an unconditional one, and tells the reader to confirm order by readback.",
+        "REPLACE_STRING uses action_param_1 and action_param_2, with the find value \"-\".",
+        "The ACTIONS list ends with SEND_REMAINING.",
+        "All boolean-valued keys are quoted strings, not native booleans.",
+        "adf_enabled is set to \"true\" in PARAM_LIST.",
+        "Cites AdfIntentOutputConfigurator.buildAdfPluginBundle() as the code location.",
+        "Does not claim the Kotlin was compiled or run."
+      ],
+      "files": [
+        "assets/code-patterns/adf-intent-output/AdfIntentOutputConfigurator.kt",
+        "assets/test-fixtures/adf-rule-cases/replace-string.json",
+        "references/api-patterns.md"
+      ]
+    },
+    {
+      "id": "adf-criteria-decoder-scoped-rule",
+      "category": "supported-outcome",
+      "purpose": "Proves criteria scoping is tested with a non-matching control input, and that unattested symbology tokens are flagged rather than asserted as documented.",
+      "prompt": "Only transform scans that start with 99 and are exactly 7 characters - strip the 99 prefix. Everything else must pass through untouched. Also, can I restrict this to Code 39 only?",
+      "expected_output": "Sets string=99, string_pos=0, string_len=7 with SKIP_AHEAD 2 then SEND_REMAINING. Supplies non-matching control inputs (8812345, 991234567) with unchanged expected outputs. For Code 39, explains alldecoders=\"false\" plus a DECODERS entry, but flags that Australian Postal is the only attested decoder token so the Code 39 spelling must be confirmed by readback.",
+      "assertions": [
+        "string, string_pos and string_len are all set to the requested criteria values.",
+        "At least one non-matching control input with an unchanged expected output is provided.",
+        "Symbology scoping shows alldecoders set to \"false\" plus a DECODERS entry carrying device_id.",
+        "The response flags the Code 39 token spelling as unverified and to be confirmed by readback.",
+        "The response does not claim Code 39 is a documented token value.",
+        "References fixture Case 4 or Case 6 in expected-cases.md."
+      ],
+      "files": [
+        "assets/test-fixtures/adf-rule-cases/expected-cases.md",
+        "references/api-patterns.md",
+        "references/usage-patterns.md"
+      ]
+    },
+    {
+      "id": "adf-device-verified-write-shape",
+      "category": "supported-outcome",
+      "purpose": "REGRESSION. The published SET_CONFIG reference documents a bundle shape that returns RESULT=SUCCESS while creating no rule at all. Guards against the skill ever teaching the documented shape again.",
+      "prompt": "Build the SET_CONFIG bundle for an ADF rule on the Intent output plugin. Where does adf_enabled go, and what type is PARAM_LIST?",
+      "expected_output": "adf_enabled is placed at ADF PLUGIN_CONFIG level, as a sibling of PARAM_LIST. PARAM_LIST is an ordered ParcelableArrayList of rule bundles, with no ADF_RULE wrapper. Each ACTIONS entry carries action_index. The response states this is device-verified on DataWedge 15.0.73 and contradicts the published reference, and that the documented shape silently creates nothing while returning SUCCESS.",
+      "assertions": [
+        "adf_enabled is placed beside PARAM_LIST at plug-in level, NOT inside PARAM_LIST.",
+        "PARAM_LIST is described as an ordered list of rule bundles.",
+        "No ADF_RULE wrapper is used on the write path.",
+        "Each ACTIONS entry includes action_index.",
+        "The response flags the documented shape as returning SUCCESS while creating no rule.",
+        "The correction is attributed to device evidence on DataWedge 15.0.73, not to the documentation.",
+        "The response tells the reader to re-verify on their own DataWedge version."
+      ],
+      "files": [
+        "references/api-patterns.md",
+        "references/implementation.md",
+        "assets/code-patterns/adf-intent-output/AdfIntentOutputConfigurator.kt",
+        "assets/test-fixtures/adf-rule-cases/device-verified-ean13-reorder.json"
+      ]
+    },
+    {
+      "id": "adf-antipattern-rule-order-shadowing",
+      "category": "anti-pattern",
+      "purpose": "REGRESSION for AP-11. Observed on device: a scoped rule merged behind the auto-created Rule0 never fires, while SET_CONFIG reports SUCCESS and a readback confirms the rule exists. Rule present and verified is not rule effective.",
+      "prompt": "I added a rule scoped to string_len 13 using RESET_CONFIG false so I would not lose anything. SET_CONFIG returned SUCCESS and a readback shows my rule is there, but scans still arrive completely unchanged. Why?",
+      "expected_output": "Identifies rule shadowing: evaluation is ordered, the first matching rule wins, and the auto-created Rule0 has no criteria so it matches everything and sits first. Merging appends rather than reorders, so specificity confers no priority. Prescribes RESET_CONFIG=true with PARAM_LIST carrying every rule in order, most specific first and catch-all last, re-supplying a passthrough because clearing Rule0 leaves non-matching input with no rule, then confirming order by readback.",
+      "assertions": [
+        "Identifies rule ordering / shadowing as the cause, not a malformed rule.",
+        "States that the first matching rule wins and that Rule0 has no criteria.",
+        "States that merging cannot reposition a rule.",
+        "Prescribes RESET_CONFIG=true plus re-supplying all rules in order.",
+        "Requires the catch-all passthrough to be LAST.",
+        "Warns that clearing Rule0 leaves non-matching input with no rule unless a passthrough is re-supplied.",
+        "Notes that a readback confirming existence does not prove effectiveness.",
+        "Requires confirming the resulting order by readback."
+      ],
+      "files": [
+        "references/anti-patterns.md",
+        "references/troubleshooting.md",
+        "assets/test-fixtures/adf-rule-cases/device-verified-ean13-reorder.json"
+      ]
+    },
+    {
+      "id": "adf-antipattern-ownership-crash",
+      "category": "anti-pattern",
+      "purpose": "REGRESSION for AP-12. The single-owner guard threw IllegalStateException from the constructor and crashed the app on ordinary activity recreation - the enforcement was worse than the bug it prevented.",
+      "prompt": "Review this ownership guard: a process-wide set of claimed profile names, check(set.add(profileName)) throwing from the configurator constructor, and the claim released only when the host isFinishing.",
+      "expected_output": "Rejects the design. Android constructs a recreated Activity before destroying the old one, so an overlapping claim is normal and transient, and releasing only on isFinishing guarantees a collision on rotation or configuration change. Prescribes a per-profile registry whose factory returns the existing instance instead of throwing, with a settable stateListener the host clears on destroy so a process-scoped owner never retains a destroyed Activity. Notes that recreation then reattaches to the same owner and keeps its readiness state.",
+      "assertions": [
+        "Identifies that throwing from the constructor makes a normal lifecycle event fatal.",
+        "States that Android creates the new instance before destroying the old one.",
+        "Identifies releasing only on isFinishing as insufficient.",
+        "Prescribes a per-profile registry / factory that returns the existing instance.",
+        "Requires a clearable state listener so a destroyed Activity is not retained.",
+        "Notes that the single-owner invariant itself is correct and must be preserved, not dropped.",
+        "Does not propose downgrading the guard to a silent no-op that permits two competing owners."
+      ],
+      "files": [
+        "references/anti-patterns.md",
+        "assets/code-patterns/adf-intent-output/AdfIntentOutputConfigurator.kt"
+      ]
+    },
+    {
+      "id": "adf-antipattern-result-info-success",
+      "category": "anti-pattern",
+      "purpose": "REGRESSION for AP-13. Requiring an empty RESULT_INFO made every success read as a failure and retried into a blocked state, because DataWedge returns {PROFILE_NAME=...} alongside RESULT=SUCCESS.",
+      "prompt": "My success check is: result == \"SUCCESS\" && resultInfo.isEmpty(). Every SET_CONFIG logs RESULT=SUCCESS but my app reports it failed after three attempts. What is wrong?",
+      "expected_output": "Identifies the RESULT_INFO condition as the defect: RESULT carries the outcome, RESULT_INFO carries detail and is not empty on success - DataWedge 15.0.73 returns {PROFILE_NAME=<profile>}. Prescribes testing RESULT == SUCCESS alone and checking RESULT_INFO values against the terminal result codes. Additionally notes that SUCCESS proves acceptance, not rule creation, and only a readback proves creation.",
+      "assertions": [
+        "Identifies the isEmpty() condition on RESULT_INFO as the defect.",
+        "States that RESULT_INFO carries {PROFILE_NAME=...} on success.",
+        "Prescribes testing RESULT == SUCCESS alone.",
+        "Retains inspection of RESULT_INFO values against terminal result codes.",
+        "Notes that SUCCESS means accepted, not created, and only a readback proves creation.",
+        "Attributes the behaviour to device evidence on DataWedge 15.0.73."
+      ],
+      "files": [
+        "references/anti-patterns.md",
+        "references/api-patterns.md",
+        "assets/code-patterns/adf-intent-output/AdfIntentOutputConfigurator.kt"
+      ]
+    },
+    {
+      "id": "adf-antipattern-unbounded-readback",
+      "category": "anti-pattern",
+      "purpose": "REGRESSION for AP-14. The verification path had no attempt cap, so an unrecognised readback shape produced a broadcast storm - 12+ GET_CONFIG sends in under 5 seconds with no convergence and no error surfaced.",
+      "prompt": "My write path retries at most 3 times, then I loop requesting GET_CONFIG until the readback confirms the rule, since readbacks are cheap and idempotent. Any problem?",
+      "expected_output": "Identifies the verification loop as unbounded. The write succeeded so the write-path cap never engages, and any unrecognised readback shape - including the documented-versus-actual PARAM_LIST mismatch - loops forever, flooding DataWedge and surfacing no error. Prescribes a separate bounded counter on the verification path that fails into an explicit blocked reason, and reporting could-not-confirm as a real outcome the host must see.",
+      "assertions": [
+        "Identifies the verification loop as unbounded and distinct from the write-path cap.",
+        "Explains that a successful write means the write cap never engages.",
+        "Names an unrecognised readback shape as a realistic trigger.",
+        "Prescribes a separate bounded counter for the verification path.",
+        "Requires failing into an explicit blocked reason rather than retrying forever.",
+        "States that could-not-confirm is a reportable outcome, not a reason to keep retrying."
+      ],
+      "files": [
+        "references/anti-patterns.md",
+        "assets/code-patterns/adf-intent-output/AdfIntentOutputConfigurator.kt"
+      ]
+    },
+    {
+      "id": "adf-positional-reorder-outcome",
+      "category": "supported-outcome",
+      "purpose": "Device-verified end-to-end outcome, and the canonical demonstration that ADF has no reverse action - reversal must be unrolled, so the action count scales with a fixed known length.",
+      "prompt": "Deliver only the 3rd digit, then the 1st digit, then digits 4 to 13 in reverse, for 13-digit barcodes. All transformation must happen in DataWedge; my app must not touch the string.",
+      "expected_output": "States that ADF has no reverse action, no loop, and no length arithmetic, so reversal is unrolled one character at a time and the fixed length is mandatory. Produces output positions [3,1,13,12,11,10,9,8,7,6,5,4] as 35 actions using SKIP_TO_START plus SKIP_AHEAD n-1 plus SEND_NEXT 1 per character, with no terminal SEND_REMAINING because truncation is intended. Notes that absolute positioning avoids depending on whether SEND_NEXT advances the cursor. Gives 8055002861991 to 581991682005 as the device-confirmed result, and requires the catch-all passthrough last with RESET_CONFIG true.",
+      "assertions": [
+        "States explicitly that ADF has no reverse action and reversal must be unrolled.",
+        "States that the barcode length must be fixed and known because the action count depends on it.",
+        "Produces output positions [3, 1, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4].",
+        "Uses SKIP_TO_START plus SKIP_AHEAD plus SEND_NEXT per emitted character, 35 actions total.",
+        "Omits a terminal SEND_REMAINING from the primary rule and says truncation is intended.",
+        "Explains that absolute positioning avoids relying on SEND_NEXT cursor-advance behaviour.",
+        "Cites 8055002861991 to 581991682005 as device-confirmed on DataWedge 15.0.73.",
+        "Requires the catch-all passthrough rule last, with RESET_CONFIG true to control order.",
+        "Confirms the app performs no string manipulation on the payload.",
+        "For arbitrary-length input, reports that ADF cannot do this and stops."
+      ],
+      "files": [
+        "assets/test-fixtures/adf-rule-cases/device-verified-ean13-reorder.json",
+        "assets/test-fixtures/adf-rule-cases/expected-cases.md",
+        "references/api-patterns.md"
+      ]
+    },
+    {
+      "id": "adf-unknown-multi-rule-ordering",
+      "category": "unsupported-or-unknown",
+      "purpose": "UPDATED after device validation. Multi-rule submission and ordering are no longer unknown: PARAM_LIST is an ordered list and the first match wins. This eval now guards the correct answer AND the remaining boundary - that the finding is device evidence for DataWedge 15.0.73, not a documented guarantee portable to other versions.",
+      "prompt": "Push three ADF rules to the profile in one SET_CONFIG call and guarantee they evaluate in the order I list them, ahead of the rules that are already there.",
+      "expected_output": "Confirms this is supported: PARAM_LIST is an ordered ParcelableArrayList of rule bundles, several rules can be sent in one call, and the first matching rule wins. To place them ahead of existing rules, RESET_CONFIG must be true and every rule re-supplied in order, because merging appends and cannot reposition. Requires a catch-all passthrough last and a readback to confirm the resulting order. States that this is device evidence from DataWedge 15.0.73, not a documented guarantee, so it must be re-verified on other versions, and warns that RESET_CONFIG=true discards rules owned by others on a shared profile.",
+      "assertions": [
+        "Confirms multiple rules in one SET_CONFIG call are supported via an ordered PARAM_LIST.",
+        "States that the first matching rule wins.",
+        "States that RESET_CONFIG=true is required to control order because merging cannot reposition.",
+        "Requires any catch-all rule to be last.",
+        "Requires confirming the resulting order by GET_CONFIG readback.",
+        "Attributes the ordering behaviour to device evidence on DataWedge 15.0.73, not to documentation.",
+        "States it must be re-verified on other DataWedge versions.",
+        "Warns that RESET_CONFIG=true discards other owners' rules on a shared profile."
+      ],
+      "files": ["SKILL.md", "references/api-patterns.md", "references/troubleshooting.md"]
+    },
+    {
+      "id": "adf-unknown-rfid-source",
+      "category": "unsupported-or-unknown",
+      "purpose": "Guards against deriving behavior from a source that could not be retrieved, and against retrying a license-gated failure.",
+      "prompt": "Apply the same kind of formatting rule to RFID tag reads through the RFID input plugin, and set up BDF too. I got UNLICENSED_FEATURE back from my last attempt.",
+      "expected_output": "Stops on both counts. States that the Zebra support article on BDF/ADF for the RFID input plugin could not be retrieved during authoring, so no RFID-source or BDF behavior is claimed, and hands off. Identifies UNLICENSED_FEATURE as a terminal result code that must not be retried, and points at the licensing stop condition.",
+      "assertions": [
+        "Response declines RFID-source ADF and BDF as out of scope.",
+        "States that the supporting RFID/BDF article was unretrievable and that no facts were derived from it.",
+        "Does not invent BDF parameter names or RFID device_id behavior.",
+        "Identifies UNLICENSED_FEATURE as terminal and instructs not to retry.",
+        "Points to the licensing stop condition rather than proposing a workaround."
+      ],
+      "files": ["SKILL.md", "references/sources.md", "references/troubleshooting.md"]
+    },
+    {
+      "id": "adf-offline-no-shell",
+      "category": "offline-no-shell",
+      "purpose": "Proves the core path works with no shell, no adb, and no ability to run anything, and that what remains unverified is disclosed.",
+      "prompt": "I have no adb, no shell access, and no way to run a build. Walk me through adding a leading-zero-trim ADF rule to my profile's intent output and tell me exactly what I still cannot confirm.",
+      "expected_output": "Delivers the complete rule and bundle tree from the bundled references, plus the manual DataWedge UI procedure (Profile, Advanced Data Formatting, Rules with Intent output selected) and the fixture comparison. Explicitly lists what stays unverified without execution: that DataWedge accepted the bundle, that key spellings hold on the installed version, that the symbology token resolved, and the actual transformed output.",
+      "assertions": [
+        "Produces the complete rule without requiring any command execution.",
+        "Provides the manual DataWedge UI equivalent procedure.",
+        "Explicitly enumerates what remains unverified without execution.",
+        "Reports the achieved validation level as inspection.",
+        "Does not instruct the user to run a script bundled with this skill, because none exists."
+      ],
+      "files": ["SKILL.md", "references/implementation.md"]
+    },
+    {
+      "id": "adf-offline-no-network",
+      "category": "offline-no-network",
+      "purpose": "Proves every key name, accepted value, and action parameter is available from bundled content rather than fetched from techdocs at runtime.",
+      "prompt": "This machine has no internet access. Give me the exact ADF PARAM_LIST keys, the ADF_RULE keys, and the parameter positions for REMOVE_CHARACTERS and REPLACE_STRING.",
+      "expected_output": "Answers entirely from bundled references: adf_enabled and ADF_RULE in PARAM_LIST; name, enabled, alldevices, string, string_pos, string_len in ADF_RULE; REPLACE_STRING taking find and replace in action_param_1 and action_param_2; REMOVE_CHARACTERS taking position (0 front, 1 between, 2 end, 3 center), start, and count in action_param_1 through action_param_3. No fetch is attempted or claimed as necessary.",
+      "assertions": [
+        "All requested key names are supplied from bundled content.",
+        "REPLACE_STRING parameter positions are stated correctly as action_param_1 find and action_param_2 replace.",
+        "REMOVE_CHARACTERS states all three parameters including the position encoding 0, 1, 2, 3.",
+        "No network fetch is attempted, required, or implied.",
+        "Cites references/api-patterns.md as the local source.",
+        "Records the source review date carried in the bundled references."
+      ],
+      "files": ["references/api-patterns.md", "references/sources.md"]
+    },
+    {
+      "id": "adf-independent-install",
+      "category": "independent-installation",
+      "purpose": "Proves the skill works after copying only its own folder, with no sibling skill, repository tool, or absolute authoring path.",
+      "prompt": "I copied only the dw-adf folder into a different project, outside the original repository. Confirm every route still works and nothing external is required.",
+      "expected_output": "Confirms all links resolve inside the copied folder, no sibling skill is required for the documented core outcome, no repository-level tooling is invoked, no absolute authoring-machine path appears, and no provider-specific configuration is bundled. Notes that the DataWedge profile hand-off is a recommendation only and does not block the core ADF outcome.",
+      "assertions": [
+        "All relative links in SKILL.md and every reference resolve within the copied skill folder.",
+        "No sibling skill is required to complete the documented core ADF outcome.",
+        "No repository-level script or runtime tool is invoked.",
+        "No absolute authoring-machine path appears in any bundled file.",
+        "No provider-specific configuration file is bundled.",
+        "The DataWedge profile skill is named as a recommendation, not a dependency."
+      ],
+      "files": [
+        "SKILL.md",
+        "references/implementation.md",
+        "assets/code-patterns/adf-intent-output/manifest-and-wiring.md"
+      ]
+    },
+    {
+      "id": "adf-release-metadata",
+      "category": "release-versioning",
+      "purpose": "Guards the release identity of the skill package and keeps it distinct from the DataWedge product version.",
+      "prompt": "What version and stage is this skill, and does that mean DataWedge ADF itself is beta?",
+      "expected_output": "Reports skill version 1.0.0-beta.1 at stage Beta with the standard Beta notice, and states that the Beta status applies to the skill package and not to DataWedge, its APIs, or ADF. Distinguishes the skill package version from the reviewed DataWedge 15.0 product scope.",
+      "assertions": [
+        "SKILL.md contains exactly one Release metadata section and it is the first level-two section.",
+        "Version is 1.0.0-beta.1 and Stage is Beta.",
+        "The standard Beta notice appears immediately after the release metadata.",
+        "The response states the Beta status applies to the skill package, not to Zebra DataWedge.",
+        "The skill package version is not confused with the DataWedge 15.0 product version scope."
+      ],
+      "files": ["SKILL.md"]
+    },
+    {
+      "id": "adf-antipattern-reset-config-wipe",
+      "category": "anti-pattern",
+      "purpose": "Protects AP-1. RESET_CONFIG defaults to true, which clears existing configuration and silently destroys sibling ADF rules while still reporting success.",
+      "prompt": "My push worked but two ADF rules that another team created are now gone. Here is what I sent: PLUGIN_NAME ADF, OUTPUT_PLUGIN_NAME INTENT, RESET_CONFIG true, CONFIG_MODE OVERWRITE. What happened and how do I stop it?",
+      "expected_output": "Identifies RESET_CONFIG=true as clearing existing configuration and creating a new one, and CONFIG_MODE=OVERWRITE as compounding it. Explains that SET_CONFIG still reports success, so the loss is silent. Prescribes RESET_CONFIG=false with CONFIG_MODE=UPDATE, and a readback before pushing so existing rules are known first. Warns against re-pushing rules whose full content is unknown.",
+      "assertions": [
+        "Identifies RESET_CONFIG=true as the cause of the lost rules.",
+        "States that RESET_CONFIG=false merges rather than clears.",
+        "Recommends CONFIG_MODE=UPDATE for this case.",
+        "Notes that the failure is silent because SET_CONFIG reports success.",
+        "Recommends a GET_CONFIG readback before pushing to learn existing rules.",
+        "Advises coordination before re-pushing rules owned by another team."
+      ],
+      "files": ["references/anti-patterns.md", "references/troubleshooting.md"]
+    },
+    {
+      "id": "adf-antipattern-competing-owner",
+      "category": "anti-pattern",
+      "purpose": "Protects AP-2 and AP-3. Two owners of profile/ADF state plus duplicate RESULT_ACTION registration produce interleaved config, doubled handling, and stale-result consumption, made worse because DataWedge does not queue commands.",
+      "prompt": "My Activity configures ADF in onResume and a foreground Service also pushes ADF config at startup. Each registers its own receiver for com.symbol.datawedge.api.RESULT_ACTION. Sometimes the rule is right, sometimes it is the old one, and it changes between runs. Review this design.",
+      "expected_output": "Names competing ownership and duplicate receiver registration as the defects. Explains that DataWedge does not queue API commands so one push may be dropped, making the surviving configuration nondeterministic, and that with COMMAND_IDENTIFIER unchecked one component consumes the other's result and reports success for a command it never sent. Prescribes exactly one AdfIntentOutputConfigurator per profile enforced by the LIVE_OWNERS check, one registration per process routed through DwResultRouter, and COMMAND_IDENTIFIER matching that drops non-matching, duplicate, and late results.",
+      "assertions": [
+        "Identifies competing ownership of ADF state as a defect.",
+        "Identifies duplicate RESULT_ACTION registration as a defect.",
+        "Explains nondeterminism via DataWedge not queueing API commands.",
+        "Explains that an unmatched COMMAND_IDENTIFIER lets one component consume another's result.",
+        "Prescribes exactly one configurator per profile and one receiver registration per process.",
+        "Names the LIVE_OWNERS check and DwResultRouter as the enforcing mechanisms.",
+        "Requires dropping non-matching, duplicate, and late results."
+      ],
+      "files": [
+        "references/anti-patterns.md",
+        "assets/code-patterns/adf-intent-output/AdfIntentOutputConfigurator.kt",
+        "assets/code-patterns/adf-intent-output/DwResultReceiver.kt"
+      ]
+    },
+    {
+      "id": "adf-host-contract-result-receiver",
+      "category": "host-contract",
+      "purpose": "Proves every declared callback maps to an exact host action and an exact local code location, with lifecycle, threading, idempotency, failure, and teardown behavior stated. A callback name or comment alone is incomplete wiring.",
+      "prompt": "Show me exactly what my app must do for every DataWedge callback in this pattern - which function, at which lifecycle point, on which thread, what happens on duplicate or late delivery, and what to tear down.",
+      "expected_output": "Reproduces the callback-to-host-action map: onHostStart registers then reconciles; onDataWedgeResult matches COMMAND_IDENTIFIER, reads RESULT and RESULT_INFO, then reconciles; readbackMatchesRequestedRule sets verifiedByReadback; timeoutRunnable retries; terminal codes set blockedReason and stop; onStateChanged is the host UI action; ScanDataReceiver.onReceive consumes data_string; onHostStop unregisters, cancels the timeout and drops the token; release frees the owner claim. States that onReceive runs on the main thread and must not block, that duplicate and late results are dropped by token mismatch, and that teardown is symmetric with registration and never disables the profile.",
+      "assertions": [
+        "Every callback is mapped to a named function, not to a comment or interface name.",
+        "Lifecycle points are stated for registration and teardown.",
+        "States that BroadcastReceiver.onReceive runs on the main thread and must not block.",
+        "Duplicate and late result handling is specified as dropped via COMMAND_IDENTIFIER mismatch.",
+        "Terminal result codes are shown setting blockedReason and stopping retries.",
+        "Teardown is symmetric with registration and does not disable the DataWedge profile.",
+        "The host action for readiness state changes is identified as onStateChanged."
+      ],
+      "files": [
+        "assets/code-patterns/adf-intent-output/manifest-and-wiring.md",
+        "assets/code-patterns/adf-intent-output/AdfIntentOutputConfigurator.kt",
+        "references/implementation.md"
+      ]
+    },
+    {
+      "id": "adf-async-completion-order",
+      "category": "async-completion-order",
+      "purpose": "Protects AP-4. Receiver registration (R2) and ADF application (R4) complete independently, so both completion orders, cold and warm start, duplicate and late signals, cancellation and shutdown must all converge through one idempotent reconciliation path.",
+      "prompt": "Walk every completion order for this integration: the SET_CONFIG result arriving before my receiver is registered, the receiver being ready long before DataWedge answers, a warm restart where the rule is already applied, two results for one command, a result arriving after onStop, and a command superseded mid-flight. What must happen in each case?",
+      "expected_output": "Covers all six orders. Result-before-registration is rescued by the timeout routing into reconcileAdfState rather than being lost. Receiver-ready-first waits and reconciles on result arrival. Warm restart with the rule already applied is confirmed by readback and issues no redundant SET_CONFIG. A duplicate result is a no-op with no second readback. A late result after onStop is dropped with no crash and no state mutation. A superseded command has its token rotated so only the newest settles state. States that all four edges - onHostStart, result, readback, timeout - call the same re-entrancy-guarded reconcileAdfState, and that retrying from only one edge is a one-sided retry causing a missed wakeup.",
+      "assertions": [
+        "All six completion orders are addressed explicitly.",
+        "Result-before-registration is recovered via the timeout path, not left hanging.",
+        "Warm restart with the rule already applied issues no redundant SET_CONFIG.",
+        "Duplicate results are a no-op and trigger no second readback.",
+        "Late results after teardown are dropped without crashing or mutating state.",
+        "Superseded commands are handled by rotating COMMAND_IDENTIFIER.",
+        "Names all four reconciliation trigger edges calling one idempotent function.",
+        "Explicitly identifies one-sided retry as the missed-wakeup defect."
+      ],
+      "files": [
+        "references/implementation.md",
+        "references/anti-patterns.md",
+        "assets/code-patterns/adf-intent-output/AdfIntentOutputConfigurator.kt"
+      ]
+    },
+    {
+      "id": "adf-freshness-getconfig-readback",
+      "category": "async-completion-order",
+      "purpose": "Protects AP-5 and AP-6. A cached configured flag and a bare success result are both weaker than the freshness contract, which only a GET_CONFIG plus PROCESS_PLUGIN_NAME readback satisfies.",
+      "prompt": "To save startup time I store adfConfigured=true in SharedPreferences after the first successful SET_CONFIG and skip configuration on later launches. My SET_CONFIG returned success, so the rule is definitely there, right?",
+      "expected_output": "Rejects both assumptions. A cached flag does not satisfy freshness because DataWedge configuration can change through a DataWedge upgrade or data clear, a user edit, an MX configuration, or another app taking the profile. A success result is not proof the rule is stored. Prescribes GET_CONFIG with PROCESS_PLUGIN_NAME as the only fresh confirmation, notes that a plain GET_CONFIG cannot read process plug-ins so an empty ADF section means wrong query rather than no rule, and states that verifiedByReadback is per-session and never persisted.",
+      "assertions": [
+        "States that a cached configured flag does not satisfy the freshness requirement.",
+        "States that a success result alone does not prove the rule is stored.",
+        "Lists concrete invalidation events such as DataWedge upgrade or data clear, user edit, MX configuration, or another app.",
+        "Requires GET_CONFIG with PROCESS_PLUGIN_NAME as the fresh confirmation.",
+        "Notes that a plain GET_CONFIG cannot read process plug-ins, so an empty ADF section means wrong query.",
+        "States that verifiedByReadback is per-session state and is not persisted."
+      ],
+      "files": [
+        "references/anti-patterns.md",
+        "references/api-patterns.md",
+        "assets/test-fixtures/adf-rule-cases/expected-cases.md"
+      ]
+    }
+  ]
+}

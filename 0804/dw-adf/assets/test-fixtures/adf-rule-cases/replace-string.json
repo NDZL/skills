@@ -1,0 +1,57 @@
+{
+  "fixture": "replace-string",
+  "reviewed": "2026-08-04",
+  "datawedge_version_scope": "15.0",
+  "validation_level": "inspection",
+  "note": "Expected output derived from documented action semantics, not device-verified.",
+  "cases": [
+    { "input": "ABC-123-XYZ", "expected_data_string": "ABC123XYZ" },
+    { "input": "ABC123XYZ", "expected_data_string": "ABC123XYZ" },
+    { "input": "---", "expected_data_string": "" }
+  ],
+  "set_config": {
+    "intent_action": "com.symbol.datawedge.api.ACTION",
+    "extra": "com.symbol.datawedge.api.SET_CONFIG",
+    "SEND_RESULT": "LAST_RESULT",
+    "COMMAND_IDENTIFIER": "AdfIntentDemo-adf-2",
+    "bundle": {
+      "PROFILE_NAME": "AdfIntentDemo",
+      "PROFILE_ENABLED": "true",
+      "CONFIG_MODE": "UPDATE",
+      "PLUGIN_CONFIG": [
+        {
+          "PLUGIN_NAME": "ADF",
+          "OUTPUT_PLUGIN_NAME": "INTENT",
+          "RESET_CONFIG": "false",
+          "PARAM_LIST": {
+            "adf_enabled": "true",
+            "ADF_RULE": {
+              "name": "StripHyphens",
+              "enabled": "true",
+              "alldevices": "false",
+              "string": "",
+              "string_pos": "0",
+              "string_len": "0",
+              "DEVICES": [
+                {
+                  "device_id": "BARCODE",
+                  "enabled": "true",
+                  "alldecoders": "true",
+                  "all_label_ids": "true"
+                }
+              ],
+              "ACTIONS": [
+                {
+                  "type": "REPLACE_STRING",
+                  "action_param_1": "-",
+                  "action_param_2": ""
+                },
+                { "type": "SEND_REMAINING" }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}
