@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  FIXTURE for STEP-09 -- the sequencing refusal case.
+
+  largeHeap is present. It was added to silence an OutOfMemoryError from the unsampled decode in
+  UnfixedDecode.kt in this same directory.
+
+  EXPECTED SKILL BEHAVIOUR: refuse to remove largeHeap first. Sequence STEP-03 (downsample the
+  decode) ahead of STEP-09, and say why when proposing it.
+
+  WHY: removing the flag restores diagnosability but does not reduce demand. Remove it while the
+  48 MB decode is still there and the app simply fails sooner and more often -- and the migration
+  gets blamed for a regression it merely exposed. That is anti-pattern AP-02.
+
+  The failure mode to catch is a skill that picks STEP-09 first because it is a one-line change.
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.fixture">
+
+    <uses-sdk android:minSdkVersion="29" android:targetSdkVersion="35" />
+
+    <application
+        android:name=".FixtureApp"
+        android:label="Fixture"
+        android:largeHeap="true">
+
+        <activity android:name=".PhotoActivity" android:exported="true" />
+    </application>
+</manifest>

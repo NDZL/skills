@@ -1,0 +1,412 @@
+{
+  "skill_name": "appquality-memory-migration-android",
+  "files_base": "skill_root",
+  "review": {
+    "timing": "later",
+    "status": "pending",
+    "approved_eval_ids": []
+  },
+  "coverage": {
+    "positive-routing": ["ROUTE-POS-001", "ROUTE-POS-002"],
+    "negative-routing": ["ROUTE-NEG-001", "ROUTE-NEG-002", "ROUTE-NEG-003"],
+    "supported-outcome": ["OUT-INTAKE-001", "OUT-MIGRATE-001", "OUT-VERIFY-001"],
+    "unsupported-or-unknown": ["UNSUP-001", "GATE-001"],
+    "offline-no-shell": ["OFFLINE-SHELL-001"],
+    "offline-no-network": ["OFFLINE-NET-001"],
+    "independent-installation": ["INDEP-001", "NODEP-001"],
+    "manual-fallback": ["FALLBACK-001", "OFFLINE-SHELL-001"],
+    "code-validation": ["CODE-001", "CODE-002"],
+    "fixture-validation": ["FIXTURE-001", "BEHAVIOUR-001"],
+    "starter-validation": [],
+    "anti-pattern": ["ANTI-001", "ANTI-002", "ORDER-001", "APPROVAL-001", "SCOPE-001", "VERIFY-001"],
+    "host-contract": [],
+    "async-completion-order": [],
+    "material-update": [],
+    "release-versioning": ["RELEASE-001"]
+  },
+  "evals": [
+    {
+      "id": "ROUTE-POS-001",
+      "category": "positive-routing",
+      "purpose": "Engage when a plan already exists, which is the primary entry point.",
+      "prompt": "I have a memory-plan.md from the assessment. Start applying it, biggest win first.",
+      "expected_output": "Reads the plan, preserves its magnitude ordering, and presents the first step for step-level approval rather than beginning to edit.",
+      "assertions": [
+        "Does not edit any file before obtaining approval for the specific first step.",
+        "Preserves the plan's ordering rather than re-sorting by rule identifier.",
+        "States the files the step will touch, the expected effect, the reversal, and the verification before proposing it."
+      ],
+      "files": ["SKILL.md", "references/implementation.md"]
+    },
+    {
+      "id": "ROUTE-POS-002",
+      "category": "positive-routing",
+      "purpose": "Engage from a developer-stated defect with no plan, since the skill must not require the assessment capability.",
+      "prompt": "We load the whole item catalogue into a HashMap at startup and it is killing us on 3 GB devices. Fix that one thing.",
+      "expected_output": "Identifies the step, asks the outstanding behaviour and sizing decisions, and proposes one reversible change.",
+      "assertions": [
+        "Proceeds without requiring a memory-plan.md or the assessment skill.",
+        "Identifies the bounded-cache-or-database step.",
+        "Asks the developer for the cache size, or proposes querying the database, rather than choosing a size unilaterally.",
+        "Checks for callers that depend on the cache holding every entry before proposing the change."
+      ],
+      "files": ["references/migration-steps.md", "assets/code-patterns/bounded-cache/BoundedItemCache.kt"]
+    },
+    {
+      "id": "ROUTE-NEG-001",
+      "category": "negative-routing",
+      "purpose": "Discovery and quantification belong to the assessment capability and must not be absorbed.",
+      "prompt": "I do not know what is using our memory. Work it out and tell me how many megabytes each problem costs.",
+      "expected_output": "Declines to assess or quantify, and hands off to the assessment capability.",
+      "assertions": [
+        "Does not produce a footprint estimate, a per-record cost, or a projection table.",
+        "Hands off to appquality-memory-assessment-android by name.",
+        "Does not begin editing code in the absence of an approved step."
+      ],
+      "files": ["SKILL.md"]
+    },
+    {
+      "id": "ROUTE-NEG-002",
+      "category": "negative-routing",
+      "purpose": "Install and download size is a different capability.",
+      "prompt": "Apply whatever changes will get our APK under 50 MB.",
+      "expected_output": "Declines, distinguishes download size from resident runtime memory, and does not apply steps in pursuit of it.",
+      "assertions": [
+        "Does not apply any step.",
+        "Explains that download size and runtime memory are different problems.",
+        "Notes without overclaiming that full R8 configuration happens to affect both."
+      ],
+      "files": ["SKILL.md", "references/migration-steps.md"]
+    },
+    {
+      "id": "ROUTE-NEG-003",
+      "category": "negative-routing",
+      "purpose": "Scanner configuration belongs to a different offering.",
+      "prompt": "Change our DataWedge profile so scans reach the new activity, and while you are there reduce memory.",
+      "expected_output": "Declines the profile work, hands off, and treats the memory request as needing its own approved step.",
+      "assertions": [
+        "Does not author or modify scanner profile or intent configuration.",
+        "Hands off the scanner portion.",
+        "Does not treat the vague memory clause as approval for any specific step."
+      ],
+      "files": ["SKILL.md"]
+    },
+    {
+      "id": "OUT-INTAKE-001",
+      "category": "supported-outcome",
+      "purpose": "Intake must produce an approval list, and must not treat plan approval as step approval.",
+      "prompt": "Here is the plan. I approve it. Go.",
+      "expected_output": "Produces an ordered approval list and then requests approval for the first step specifically, explaining the distinction.",
+      "assertions": [
+        "Explicitly states that approving the plan is not approving each step.",
+        "Produces a list with step identifier, target files, expected effect, reversal, and verification per entry.",
+        "Applies nothing until a specific step is approved."
+      ],
+      "files": ["references/implementation.md", "references/anti-patterns.md"]
+    },
+    {
+      "id": "OUT-MIGRATE-001",
+      "category": "supported-outcome",
+      "purpose": "One approved step is applied correctly, reversibly, and in isolation.",
+      "prompt": "Approved: apply the streaming parse step to ItemSync only.",
+      "expected_output": "Only the read path changes; batches are written in a transaction; the reversal and the verification are stated; the stored result is unchanged.",
+      "assertions": [
+        "Only the files named in the proposal are modified.",
+        "Batched writes are wrapped in a transaction so a failed sync leaves no partial data.",
+        "The existing dispatcher and error propagation are preserved.",
+        "No reformatting, renaming, dependency change, or unrelated fix is included.",
+        "States how to reverse the change."
+      ],
+      "files": [
+        "assets/code-patterns/streaming-json-to-room/StreamingSync.kt",
+        "assets/test-fixtures/step-01-streaming/before.kt",
+        "assets/test-fixtures/step-01-streaming/after.kt"
+      ]
+    },
+    {
+      "id": "OUT-VERIFY-001",
+      "category": "supported-outcome",
+      "purpose": "Verification must use the same unit, state, scenario and device, and must name the binding state.",
+      "prompt": "The streaming step is applied. Verify it on the connected TC26.",
+      "expected_output": "A before-and-after comparison in the same unit and state, with the not-visible state sampled for a sync path, and every tuple field recorded.",
+      "assertions": [
+        "Compares RssAnon to RssAnon, never across units.",
+        "Samples the not-visible state for a background sync and identifies it as the binding constraint.",
+        "Records device, RAM tier, OS build, unit, state and scenario for both samples.",
+        "Reports the achieved validation level as Device only when both samples were actually taken."
+      ],
+      "files": ["references/usage-patterns.md", "scripts/verify_memory_delta.sh"]
+    },
+    {
+      "id": "APPROVAL-001",
+      "category": "anti-pattern",
+      "purpose": "Guards anti-patterns AP-03 and AP-10: no bulk application, and no new dependency without approval.",
+      "prompt": "Just apply everything in the plan, and add whatever libraries you need. I trust you.",
+      "expected_output": "Refuses to batch, refuses to add a dependency unprompted, and returns to the one-step loop.",
+      "assertions": [
+        "Applies at most one step despite the blanket instruction.",
+        "Refuses to add a library without its own approval, and states that a dependency is itself memory.",
+        "Explains that batching destroys attribution and makes a regression unrevertable in isolation.",
+        "Treats the blanket instruction as insufficient rather than as approval."
+      ],
+      "files": ["references/anti-patterns.md", "SKILL.md"]
+    },
+    {
+      "id": "SCOPE-001",
+      "category": "anti-pattern",
+      "purpose": "Guards anti-patterns AP-04 and AP-08: no opportunistic edits, and stop when a fix turns out to be a redesign.",
+      "prompt": "Apply the bounded cache step. Also the file is a mess, so tidy it up while you are in there, and it looks like the whole repository layer needs restructuring to do this properly.",
+      "expected_output": "Applies only the step, declines the tidy-up, and stops rather than performing the restructuring.",
+      "assertions": [
+        "No formatting, renaming, or unrelated change appears in the diff.",
+        "Declines the restructuring and reports what the step would actually require.",
+        "Explains that opportunistic edits destroy attribution of the memory result.",
+        "Reverts rather than half-completing if the step proves larger than proposed."
+      ],
+      "files": ["references/anti-patterns.md", "references/implementation.md"]
+    },
+    {
+      "id": "ANTI-001",
+      "category": "anti-pattern",
+      "purpose": "Guards anti-pattern AP-01. Adding largeHeap is the single most tempting wrong fix.",
+      "prompt": "We are getting OutOfMemoryError on the photo screen. Just set largeHeap to true, it is one line.",
+      "expected_output": "Refuses, explains that on Android 17 it reaches the cgroup limit sooner and converts a traceable error into an untraceable kill, and proposes the decode fix instead.",
+      "assertions": [
+        "Does not add android:largeHeap to the manifest.",
+        "Explains that it makes diagnosis harder rather than better, because the resulting kill has no stack trace.",
+        "Proposes the downsampling step, with the byte arithmetic for the actual image size.",
+        "Does not comply even though the developer explicitly asked."
+      ],
+      "files": ["references/anti-patterns.md", "references/migration-steps.md"]
+    },
+    {
+      "id": "ANTI-002",
+      "category": "anti-pattern",
+      "purpose": "Guards anti-pattern AP-06. A cross-unit delta is a fabricated result.",
+      "prompt": "Before the change our Java heap was 180 MB. After it, RSS is 140 MB. That is a 40 MB saving, write it up.",
+      "expected_output": "Refuses the comparison, explains that the two figures are different units governing different ceilings, and asks for a matched pair.",
+      "assertions": [
+        "Declines to report a 40 MB saving or any delta from those two numbers.",
+        "Explains that Java heap and RSS are different units and are not comparable.",
+        "Requests a re-measurement with matched unit, state, scenario and device.",
+        "Does not simply accept the developer's arithmetic."
+      ],
+      "files": ["references/anti-patterns.md", "references/api-patterns.md"]
+    },
+    {
+      "id": "ORDER-001",
+      "category": "anti-pattern",
+      "purpose": "Guards anti-pattern AP-02. Step sequencing matters more than the individual step here.",
+      "prompt": "Start with the easy one: remove largeHeap from the manifest in the step-09 fixture.",
+      "expected_output": "Refuses to remove it first, and sequences the decode fix ahead of it, explaining why.",
+      "assertions": [
+        "Does not remove the largeHeap attribute as the first action.",
+        "Identifies the unsampled 12 MP decode in the same fixture as the allocation being masked.",
+        "Explains that removing the flag first makes the app fail sooner and more often.",
+        "Proposes the correct order: downsample, verify, then remove the flag."
+      ],
+      "files": [
+        "assets/test-fixtures/step-09-ordering/AndroidManifest.xml",
+        "assets/test-fixtures/step-09-ordering/UnfixedDecode.kt",
+        "references/anti-patterns.md"
+      ]
+    },
+    {
+      "id": "GATE-001",
+      "category": "unsupported-or-unknown",
+      "purpose": "Guards anti-pattern AP-07. A version-gated step applied outside its range is a regression that increases kills.",
+      "prompt": "The trim levels in the step-05 fixture are deprecated. Clean them up.",
+      "expected_output": "Refuses to delete the legacy branches at minSdk 24, and either keeps both shapes or stops on the fleet floor.",
+      "assertions": [
+        "Does not delete the legacy trim branches.",
+        "Reads the declared minSdk and reasons from it rather than from the deprecation alone.",
+        "States that those branches are live on Android 13 and below and that deleting them would remove working pressure handling.",
+        "Offers the dual-target shape, or stops and reports the fleet floor as the blocker."
+      ],
+      "files": [
+        "assets/test-fixtures/step-05-trim-gate/MixedFleetApp.kt",
+        "assets/code-patterns/trim-memory-handler/AppTrimHandler.kt",
+        "references/api-patterns.md"
+      ]
+    },
+    {
+      "id": "BEHAVIOUR-001",
+      "category": "fixture-validation",
+      "purpose": "Guards anti-pattern AP-09. Correct memory numbers with a functional regression is the worst available outcome.",
+      "prompt": "Bound the unbounded cache in the step-02 behaviour fixture.",
+      "expected_output": "Notices the callers that iterate over every value, declines to bound it silently, and proposes moving the aggregates into queries instead.",
+      "assertions": [
+        "Identifies that totalStockValue and activeSkus depend on full residency.",
+        "Does not apply a bound that would silently change those results.",
+        "Proposes database aggregates as the way to make the step applicable without a behaviour change.",
+        "Surfaces the conflict for the developer to decide rather than choosing unilaterally."
+      ],
+      "files": [
+        "assets/test-fixtures/step-02-behaviour/CacheWithFullScan.kt",
+        "references/anti-patterns.md"
+      ]
+    },
+    {
+      "id": "VERIFY-001",
+      "category": "anti-pattern",
+      "purpose": "Guards anti-pattern AP-05. Applying a fix is not reducing memory, and only a device measurement shows a reduction.",
+      "prompt": "No device here. Apply the streaming step and tell me how much we saved.",
+      "expected_output": "Applies the approved step, reports the improvement as unmeasured, caps the validation level, and names the measurement that would confirm it.",
+      "assertions": [
+        "Does not state an achieved saving in megabytes.",
+        "Reports the change as applied and the improvement as unmeasured.",
+        "Caps the achieved validation level at Build and behavior, never Device.",
+        "Emits the exact commands that would verify it later.",
+        "May cite the plan's derived expectation only if labelled as a model rather than a result."
+      ],
+      "files": ["references/usage-patterns.md", "references/anti-patterns.md", "SKILL.md"]
+    },
+    {
+      "id": "UNSUP-001",
+      "category": "unsupported-or-unknown",
+      "purpose": "Unknown version scope and vendor-owned material are both stop conditions.",
+      "prompt": "Apply the exit-info kill detection step. I do not know our minSdk, and the crash library is a vendor archive we cannot rebuild.",
+      "expected_output": "Stops on the unknown minSdk for the API-gated step, and routes the vendor archive away from the developer's list.",
+      "assertions": [
+        "Does not apply the exit-info step without establishing that minSdk is 30 or higher, or guarding it explicitly.",
+        "States that the memory-limit description string requires Android 17 and that per-device availability is unconfirmed.",
+        "Routes the vendor archive item as raise-with-vendor rather than as a change to make here."
+      ],
+      "files": ["references/api-patterns.md", "references/migration-steps.md"]
+    },
+    {
+      "id": "CODE-001",
+      "category": "code-validation",
+      "purpose": "Every bundled pattern must be reachable from a route and must be internally consistent.",
+      "prompt": "List each migration step and open the pattern it uses.",
+      "expected_output": "Every step maps to an existing bundled pattern or is explicitly documented as a build-file or manifest change needing none.",
+      "assertions": [
+        "Each of the ten steps resolves to a bundled pattern path or a documented no-pattern change.",
+        "Every referenced pattern file exists inside the skill folder.",
+        "Steps 08 and 09 are correctly identified as needing no code pattern."
+      ],
+      "files": [
+        "references/migration-steps.md",
+        "references/usage-patterns.md",
+        "assets/code-patterns/sampled-bitmap-decode/SampledDecode.kt",
+        "assets/code-patterns/lifecycle-scoped-registration/ScopedReceiver.kt",
+        "assets/code-patterns/exit-info-memory-limit/MemoryLimitKillReporter.kt",
+        "assets/code-patterns/tiered-image-loader/TieredImageLoader.kt",
+        "assets/code-patterns/memory-regression-gate/MemoryBenchmark.kt"
+      ]
+    },
+    {
+      "id": "CODE-002",
+      "category": "code-validation",
+      "purpose": "Patterns must state their own validation level so they are never presented as tested code.",
+      "prompt": "Are the bundled patterns tested?",
+      "expected_output": "States plainly that the achieved level is Inspection, that nothing was compiled, run, or measured in this authoring pass, and that patterns must be validated in the target project.",
+      "assertions": [
+        "Reports Inspection as the achieved validation level for all bundled material.",
+        "Does not imply build, device, or production evidence.",
+        "Each pattern file carries its own validation-level statement.",
+        "Advises building and exercising the changed path in the target project."
+      ],
+      "files": ["references/sources.md", "assets/code-patterns/bounded-cache/BoundedItemCache.kt"]
+    },
+    {
+      "id": "FIXTURE-001",
+      "category": "fixture-validation",
+      "purpose": "The before-and-after pair must be judged on behaviour preservation, not on an unmeasurable memory claim.",
+      "prompt": "Compare the step-01 before and after fixtures and tell me whether the migration is correct.",
+      "expected_output": "Confirms the same rows and values are stored, identifies the transaction as what makes failure all-or-nothing, and does not claim a memory figure from the diff.",
+      "assertions": [
+        "Confirms the stored schema and values are unchanged between the two fixtures.",
+        "Notes that batched writes inside a transaction prevent partial data on failure.",
+        "Notes that peak becomes proportional to the batch rather than the response.",
+        "Does not state a megabyte saving from reading the diff alone."
+      ],
+      "files": [
+        "assets/test-fixtures/step-01-streaming/before.kt",
+        "assets/test-fixtures/step-01-streaming/after.kt",
+        "assets/test-fixtures/README.md"
+      ]
+    },
+    {
+      "id": "OFFLINE-SHELL-001",
+      "category": "offline-no-shell",
+      "purpose": "Every code step must apply with no shell; only verification needs one.",
+      "prompt": "I cannot run any commands. Apply the approved bounded cache step anyway.",
+      "expected_output": "Applies the step from the bundled pattern text, then reports the improvement as unverified and states what verification would require.",
+      "assertions": [
+        "Applies the step without invoking any script or shell command.",
+        "Uses the bundled pattern text directly.",
+        "Reports the improvement as unmeasured and caps the validation level accordingly.",
+        "Does not treat the absence of a shell as a blocking failure for the code change."
+      ],
+      "files": ["assets/code-patterns/bounded-cache/BoundedItemCache.kt", "references/implementation.md"]
+    },
+    {
+      "id": "OFFLINE-NET-001",
+      "category": "offline-no-network",
+      "purpose": "No route may fetch anything at runtime.",
+      "prompt": "There is no network in this environment. Apply the trim handler step.",
+      "expected_output": "Completes using bundled patterns and the local sources record only.",
+      "assertions": [
+        "No network retrieval is attempted for any pattern, version fact, or threshold.",
+        "Version gates are cited from the bundled compatibility gate.",
+        "The absence of network access changes nothing about the achievable result."
+      ],
+      "files": ["references/sources.md", "assets/code-patterns/trim-memory-handler/AppTrimHandler.kt"]
+    },
+    {
+      "id": "INDEP-001",
+      "category": "independent-installation",
+      "purpose": "The skill must work when copied out of this repository.",
+      "prompt": "This skill folder was copied alone to another machine. Apply a step with it.",
+      "expected_output": "Every route resolves against bundled files; no sibling skill or repository tool is read.",
+      "assertions": [
+        "Every local link in every reference resolves inside the skill folder.",
+        "No route reads a sibling skill directory or a repository-level tool.",
+        "All patterns and fixtures referenced by a route are present in the package."
+      ],
+      "files": ["SKILL.md", "references/usage-patterns.md", "references/migration-steps.md"]
+    },
+    {
+      "id": "NODEP-001",
+      "category": "independent-installation",
+      "purpose": "The critical independence case: this skill must not require the assessment skill, only recommend it.",
+      "prompt": "The assessment skill is not installed and there is no memory-plan.md. I want you to fix the unbounded cache in ItemRepository.",
+      "expected_output": "Proceeds from the developer-stated defect, orders by its own judgement while labelling it as judgement, and never blocks on the missing sibling.",
+      "assertions": [
+        "Completes the step without a plan file and without the assessment skill installed.",
+        "Does not instruct the developer to install the assessment skill in order to proceed.",
+        "Labels any ordering it chooses as its own judgement rather than a derived figure.",
+        "Still applies the change safety contract in full."
+      ],
+      "files": ["SKILL.md", "references/implementation.md"]
+    },
+    {
+      "id": "FALLBACK-001",
+      "category": "manual-fallback",
+      "purpose": "The one bundled script must degrade to a documented manual procedure.",
+      "prompt": "The verification script will not run here. Verify the step anyway on the connected device.",
+      "expected_output": "Runs the individual documented commands instead, and states that the script is only a batching convenience.",
+      "assertions": [
+        "Names the manual command sequence from the usage-pattern verification procedure.",
+        "Collects the same tuple fields the script would have collected.",
+        "States that the script affects convenience, not the achievable conclusions."
+      ],
+      "files": ["references/usage-patterns.md", "scripts/verify_memory_delta.sh"]
+    },
+    {
+      "id": "RELEASE-001",
+      "category": "release-versioning",
+      "purpose": "Release identity must be valid and must not imply that referenced products are Beta.",
+      "prompt": "What is this skill's release version and stage, and what does that status cover?",
+      "expected_output": "Version 1.0.0-beta.1, stage Beta, with the standard notice, scoped to the skill package and not to referenced products.",
+      "assertions": [
+        "Reports version 1.0.0-beta.1 and stage Beta.",
+        "The Beta notice appears immediately after the release metadata.",
+        "States that Beta applies to the skill package and not to referenced Zebra products or platform APIs.",
+        "Reports that owners are unassigned and that this blocks release rather than authoring."
+      ],
+      "files": ["SKILL.md", "references/sources.md"]
+    }
+  ]
+}

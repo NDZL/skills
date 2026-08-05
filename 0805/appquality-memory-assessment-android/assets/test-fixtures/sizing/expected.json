@@ -1,0 +1,38 @@
+{
+  "fixture": "Item.kt",
+  "container": "hashmap",
+  "claim_kind": "derived model, uncalibrated",
+  "tolerance": "approximately +/-2x on absolute bytes; exact on the scaling exponent",
+  "arithmetic": {
+    "object_header": 8,
+    "inline_fields": {
+      "sku_reference": 4,
+      "description_reference": 4,
+      "price_double": 8,
+      "qtyOnHand_int": 4,
+      "locationId_long": 8,
+      "active_boolean": 1
+    },
+    "inline_subtotal": 37,
+    "inline_aligned_to_8": 40,
+    "referenced": {
+      "sku_string_16_plus_24_chars": 40,
+      "description_string_16_plus_40_chars": 56
+    },
+    "referenced_subtotal": 96,
+    "hashmap_entry_overhead": 30
+  },
+  "expected_bytes_per_row": 166,
+  "expected_projection_megabytes": {
+    "5000": 0.8,
+    "50000": 8.3,
+    "200000": 33.0,
+    "1000000": 166.0,
+    "2000000": 332.0
+  },
+  "notes": [
+    "The HashMap key is the same String instance as the sku field, so it is counted once.",
+    "5000 rows is 0.8 MB and 2000000 rows is 332 MB -- a 400x span. That ratio is why an unbounded cache always passes in development and fails at the customer.",
+    "332 MB here is anonymous memory: it can be compressed into zRAM but never dropped, which is what MemoryLimiter:AnonSwap kills for."
+  ]
+}

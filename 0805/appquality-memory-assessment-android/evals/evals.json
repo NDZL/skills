@@ -1,0 +1,353 @@
+{
+  "skill_name": "appquality-memory-assessment-android",
+  "files_base": "skill_root",
+  "review": {
+    "timing": "later",
+    "status": "pending",
+    "approved_eval_ids": []
+  },
+  "coverage": {
+    "positive-routing": ["ROUTE-POS-001", "ROUTE-POS-002"],
+    "negative-routing": ["ROUTE-NEG-001", "ROUTE-NEG-002", "ROUTE-NEG-003"],
+    "supported-outcome": ["OUT-INV-001", "OUT-EST-001", "OUT-PLAN-001", "OUT-DIAG-001", "HANDOFF-001"],
+    "unsupported-or-unknown": ["OUT-EST-002", "UNSUP-001"],
+    "offline-no-shell": ["OFFLINE-SHELL-001"],
+    "offline-no-network": ["OFFLINE-NET-001"],
+    "independent-installation": ["INDEP-001"],
+    "manual-fallback": ["OFFLINE-SHELL-001", "FALLBACK-001"],
+    "code-validation": [],
+    "fixture-validation": ["FIXTURE-001", "SCRIPT-001"],
+    "starter-validation": [],
+    "anti-pattern": ["UNIT-001", "READONLY-001", "NEG-FP-001", "NEG-FP-002"],
+    "host-contract": [],
+    "async-completion-order": [],
+    "material-update": [],
+    "release-versioning": ["RELEASE-001"]
+  },
+  "evals": [
+    {
+      "id": "ROUTE-POS-001",
+      "category": "positive-routing",
+      "purpose": "Engage on a plain memory-reduction request for a Zebra target.",
+      "prompt": "Our Android picking app is using too much RAM on TC26 handhelds. Can you work out where it is going?",
+      "expected_output": "Skill engages, states it is read-only, asks for device tier and fleet Android version spread before ruling, and proposes inventory then estimate.",
+      "assertions": [
+        "Skill engages rather than deferring to a generic performance answer.",
+        "States that it does not edit code and names appquality-memory-migration-android for fixes.",
+        "Requests target device tier and Android version spread, or records them as a stop condition."
+      ],
+      "files": ["SKILL.md", "references/implementation.md"]
+    },
+    {
+      "id": "ROUTE-POS-002",
+      "category": "positive-routing",
+      "purpose": "Recognise the untraceable-kill symptom, which has no stack trace and is the signature Android 17 failure.",
+      "prompt": "Our app just disappears mid-shift on some devices. Nothing in the crash reporter at all. What is going on?",
+      "expected_output": "Routes to diagnose mode, identifies the memory-limit kill candidate, and asks for exit-info evidence before concluding.",
+      "assertions": [
+        "Names ApplicationExitInfo, REASON_OTHER, and the MemoryLimiter:AnonSwap description string.",
+        "States that Memory Limiter is Android 17 and higher and does not attribute the kill to it on earlier versions.",
+        "Does not guess a memory figure."
+      ],
+      "files": ["references/troubleshooting.md", "references/api-patterns.md"]
+    },
+    {
+      "id": "ROUTE-NEG-001",
+      "category": "negative-routing",
+      "purpose": "APK or download size is a different capability and must not be absorbed.",
+      "prompt": "Our APK is 90 MB and we need it under 50 MB for slow store rollouts. Help us shrink it.",
+      "expected_output": "Declines as out of scope, explains that download size and runtime memory are different problems, and hands off.",
+      "assertions": [
+        "Does not begin a memory assessment.",
+        "Explains the distinction between install or download size and resident runtime memory.",
+        "States the exclusion explicitly rather than partially complying."
+      ],
+      "files": ["SKILL.md"]
+    },
+    {
+      "id": "ROUTE-NEG-002",
+      "category": "negative-routing",
+      "purpose": "Scanner configuration belongs to a different offering.",
+      "prompt": "Scanning stopped working on our TC26 after the last update. Set up the DataWedge profile so the barcode reaches our activity.",
+      "expected_output": "Declines profile configuration and hands off, while optionally noting that device-wide low memory can also stop scanning.",
+      "assertions": [
+        "Does not attempt to author or modify a DataWedge profile or intent configuration.",
+        "Hands off to the DataWedge capability.",
+        "If it mentions the low-memory link to scanning, it labels it as a possibility to check, not a diagnosis."
+      ],
+      "files": ["SKILL.md", "references/troubleshooting.md"]
+    },
+    {
+      "id": "ROUTE-NEG-003",
+      "category": "negative-routing",
+      "purpose": "Multi-form-factor layout work is excluded by design.",
+      "prompt": "Make our app adapt its layout properly between the WS50 wearable and an ET40 tablet.",
+      "expected_output": "Declines responsive or adaptive layout work and hands off, without starting a memory assessment.",
+      "assertions": [
+        "Does not produce layout or screen-size guidance.",
+        "States the exclusion and the hand-off."
+      ],
+      "files": ["SKILL.md"]
+    },
+    {
+      "id": "OUT-INV-001",
+      "category": "supported-outcome",
+      "purpose": "Inventory mode maps the codebase without judging it.",
+      "prompt": "Run an inventory of this Android project for memory purposes. Do not assess anything yet.",
+      "expected_output": "A map covering modules, declared processes and services, dependencies, the data layer, long-lived collections, bitmap entry points, lifecycle registrations, build configuration, UI toolkit, and minSdk or targetSdk.",
+      "assertions": [
+        "Covers every inventory item listed in implementation.md.",
+        "Contains no severity ratings and no cost figures, because inventory is not assessment.",
+        "Records what is present rather than what was expected."
+      ],
+      "files": ["references/implementation.md"]
+    },
+    {
+      "id": "OUT-EST-001",
+      "category": "supported-outcome",
+      "purpose": "Estimate mode must derive a scaling law and name the binding constraint, not just list defects.",
+      "prompt": "Estimate the memory footprint of this project. Target is a 3 GB TC26 on Android 16, minSdk 29, largest customer has about 2 million item rows.",
+      "expected_output": "Per-record byte cost with the arithmetic shown, a projection table across row counts, a crossing point in rows, and the binding process state named.",
+      "assertions": [
+        "Shows the derivation of bytes per row rather than asserting a total.",
+        "Labels every derived figure as a model with its calibration state.",
+        "Names the not-visible state as the binding constraint when background work is present.",
+        "Uses the supplied 2 million row count in the projection."
+      ],
+      "files": ["references/quantification.md", "references/rule-catalogue.md"]
+    },
+    {
+      "id": "OUT-EST-002",
+      "category": "unsupported-or-unknown",
+      "purpose": "The refusal-to-fabricate case. Must withhold what it cannot know AND still deliver what it can derive. Both halves matter.",
+      "prompt": "Estimate our memory footprint. We have no device available and I do not know the row counts.",
+      "expected_output": "Baseline, accumulation rate, record counts and ceiling all reported UNKNOWN, headroom omitted, while per-record scaling and crossing points are still derived and delivered.",
+      "assertions": [
+        "Does not state an absolute footprint in megabytes.",
+        "Reports the baseline, accumulation rate, record count and ceiling as unknown by name.",
+        "Still emits derived per-record costs and crossing points expressed in rows.",
+        "Emits the exact commands or business questions that would close each missing term.",
+        "Does not substitute a threshold from another device or from any published example configuration."
+      ],
+      "files": ["references/quantification.md", "references/measurement.md"]
+    },
+    {
+      "id": "OUT-PLAN-001",
+      "category": "supported-outcome",
+      "purpose": "The plan must be ordered by derived magnitude, not by rule identifier or file order.",
+      "prompt": "Produce a memory plan for this project. Write it to memory-plan.md.",
+      "expected_output": "A memory-plan.md ordered by derived magnitude, each entry carrying file and line, rule, severity, derived cost with parameters, fix summary, and the verification that would confirm it.",
+      "assertions": [
+        "Findings whose cost scales with customer data are ordered above fixed-cost findings of equal severity.",
+        "Every entry names the verification that would confirm the fix.",
+        "The missing-baseline finding is reported ahead of any blocker when no baseline exists.",
+        "Only the requested plan file is written; no source file is modified."
+      ],
+      "files": ["references/implementation.md", "references/rule-catalogue.md"]
+    },
+    {
+      "id": "OUT-DIAG-001",
+      "category": "supported-outcome",
+      "purpose": "Diagnose mode must identify the correct ceiling from a symptom, since the three deaths look alike in a support ticket.",
+      "prompt": "We see OutOfMemoryError in Crashlytics on some devices, and on others the app vanishes with no crash at all. Same build. Explain.",
+      "expected_output": "Separates the two symptoms into two different ceilings with different units, and routes each to its rule family.",
+      "assertions": [
+        "Attributes OutOfMemoryError to the Java heap ceiling and the silent disappearance to the memory-limit or low-memory kill path.",
+        "States that the two ceilings are independent and measured in different units.",
+        "Refuses to add largeHeap as a remedy and explains that it makes diagnosis harder."
+      ],
+      "files": ["references/troubleshooting.md", "references/api-patterns.md"]
+    },
+    {
+      "id": "UNIT-001",
+      "category": "anti-pattern",
+      "purpose": "Guards anti-pattern AP-02. A cross-unit comparison is worse than no number and is the error most likely to slip through.",
+      "prompt": "Our Java heap peaks at 180 MB and am memory-limiter status reports a 512 MB limit, so we are at 35 percent and fine. Confirm.",
+      "expected_output": "Refuses the comparison, explains that Java heap and the cgroup ceiling are different units governing different deaths, and states which measurement would actually answer the question.",
+      "assertions": [
+        "Explicitly declines to compute a headroom percentage from those two numbers.",
+        "Names RssAnon, or cgroup anon plus swap, as the correct quantity for the memory-limit ceiling.",
+        "Notes that PSS is attribution rather than an enforcement unit.",
+        "Does not simply agree with the developer's arithmetic."
+      ],
+      "files": ["references/api-patterns.md", "references/anti-patterns.md"]
+    },
+    {
+      "id": "UNSUP-001",
+      "category": "unsupported-or-unknown",
+      "purpose": "An unknown device tier is a stop condition, and vendor-owned findings must be routed away from the developer's list.",
+      "prompt": "Assess this project. I do not know which devices it ships to. Also, the only native library comes from a vendor SDK we cannot rebuild.",
+      "expected_output": "Records the unknown device tier as a stop condition, continues with the version-independent rule subset while saying so, and routes the native library finding to the vendor.",
+      "assertions": [
+        "Does not invent or assume a device tier or a memory ceiling.",
+        "States which part of the catalogue was skipped because of the unknown version scope.",
+        "Routes the vendor archive item as raise-with-vendor rather than as a defect in this codebase."
+      ],
+      "files": ["references/implementation.md", "references/anti-patterns.md"]
+    },
+    {
+      "id": "READONLY-001",
+      "category": "anti-pattern",
+      "purpose": "Guards anti-pattern AP-07 and the split between this skill and the migration skill. Read-only is the whole risk boundary.",
+      "prompt": "While you are assessing, just go ahead and fix the obvious ones. The unbounded cache especially.",
+      "expected_output": "Declines to modify any file, records the fix in the plan instead, and hands off to the migration skill.",
+      "assertions": [
+        "No file in the target project is created, modified, or deleted, other than an explicitly requested plan artifact.",
+        "Names appquality-memory-migration-android as the capability that applies changes.",
+        "Explains why assessment and mutation are separated, referencing approval and before-and-after attribution."
+      ],
+      "files": ["SKILL.md", "references/anti-patterns.md"]
+    },
+    {
+      "id": "HANDOFF-001",
+      "category": "supported-outcome",
+      "purpose": "The plan artifact must be consumable by the migration skill without either skill depending on the other.",
+      "prompt": "Produce a plan I can feed straight into the migration skill.",
+      "expected_output": "A memory-plan.md whose entries carry everything the migration skill needs, with an explicit statement that the migration skill also accepts developer-stated steps.",
+      "assertions": [
+        "Each plan entry contains file, line, rule, severity, derived cost, fix summary, and verification.",
+        "States that the plan is an accelerator and not a prerequisite for the migration skill.",
+        "Does not instruct the developer to install the migration skill in order to use this one."
+      ],
+      "files": ["references/implementation.md"]
+    },
+    {
+      "id": "OFFLINE-SHELL-001",
+      "category": "offline-no-shell",
+      "purpose": "The complete static path must work with no shell, and must say what that costs.",
+      "prompt": "I cannot run any commands and there is no device. Assess this project from the source alone.",
+      "expected_output": "A full static assessment using the catalogue signatures and the byte table by hand, with every measured term marked unknown and the reduced-coverage statement made explicitly.",
+      "assertions": [
+        "Completes the assessment without invoking any script or shell command.",
+        "Applies rule signatures and the object-sizing byte table manually.",
+        "States that measured terms are unknown and that the result is scaling-only.",
+        "Does not treat the absence of a shell as a blocking failure."
+      ],
+      "files": ["references/rule-catalogue.md", "references/quantification.md"]
+    },
+    {
+      "id": "OFFLINE-NET-001",
+      "category": "offline-no-network",
+      "purpose": "No route may fetch anything at runtime; all facts are local.",
+      "prompt": "Assess this project. There is no network access in this environment.",
+      "expected_output": "Assessment completes using only bundled references, citing local provenance rather than retrieving anything.",
+      "assertions": [
+        "No network retrieval is attempted for any rule, threshold, or device fact.",
+        "Device tier and platform behaviour facts are cited from the bundled sources record.",
+        "The absence of network access changes nothing about the achievable result."
+      ],
+      "files": ["references/sources.md"]
+    },
+    {
+      "id": "INDEP-001",
+      "category": "independent-installation",
+      "purpose": "The skill must work when copied out of this repository, with no sibling present.",
+      "prompt": "This skill folder was copied on its own to another machine with no other skills installed. Assess a project with it.",
+      "expected_output": "Every route resolves against bundled files only; the migration skill is recommended by name but never required.",
+      "assertions": [
+        "Every local link in every reference resolves inside the skill folder.",
+        "No route reads a sibling skill directory or a repository-level tool.",
+        "The hand-off is phrased as a recommendation, so the absence of the migration skill does not block completion."
+      ],
+      "files": ["SKILL.md", "references/sources.md", "references/measurement.md"]
+    },
+    {
+      "id": "FIXTURE-001",
+      "category": "fixture-validation",
+      "purpose": "Makes the cost model falsifiable. Without this the quantification is unfalsifiable, which is worse than not quantifying.",
+      "prompt": "Derive the per-row cost of the sizing fixture and compare it with the recorded expected result.",
+      "expected_output": "166 bytes per row for the fixture with a HashMap container, matching the recorded arithmetic field by field.",
+      "assertions": [
+        "The derived bytes-per-row equals the recorded expected value of 166.",
+        "The field-by-field arithmetic matches the recorded breakdown, so a model change shows as a specific diff.",
+        "The result is labelled a model with its stated tolerance, not a measurement."
+      ],
+      "files": [
+        "assets/test-fixtures/sizing/Item.kt",
+        "assets/test-fixtures/sizing/expected.json",
+        "references/quantification.md"
+      ]
+    },
+    {
+      "id": "SCRIPT-001",
+      "category": "fixture-validation",
+      "purpose": "Both optional scripts must be self-verifying, so a broken accelerator is detected rather than silently degrading coverage.",
+      "prompt": "Verify the bundled scripts against their own self-tests and the fixture tree.",
+      "expected_output": "Both script self-tests pass; scanning the fixture tree reports the positive fixture and gates the trim-level candidate according to the supplied minSdk.",
+      "assertions": [
+        "The object-size estimator self-test passes and reports 166.",
+        "The rule scanner self-test detects the unbounded cache, the unsampled decode, and the largeHeap flag.",
+        "The scanner reports the missing exit-info check as absent-but-required.",
+        "With minSdk 24 the trim-level candidate is suppressed by the version gate; with minSdk 34 it is reported."
+      ],
+      "files": [
+        "scripts/estimate_object_size.py",
+        "scripts/scan_memory_rules.py",
+        "assets/test-fixtures/README.md"
+      ]
+    },
+    {
+      "id": "FALLBACK-001",
+      "category": "manual-fallback",
+      "purpose": "Every script route must degrade to a documented manual procedure that states what remains unverified.",
+      "prompt": "Python is unavailable in this environment. Carry out the same assessment without the scripts.",
+      "expected_output": "The manual procedure for each script is followed, and the report states which coverage was reduced.",
+      "assertions": [
+        "Names the manual equivalent for each of the three bundled scripts.",
+        "Completes the static assessment without them.",
+        "States explicitly that scripts affect coverage completeness and speed, not the achievable conclusions."
+      ],
+      "files": ["references/implementation.md", "references/measurement.md"]
+    },
+    {
+      "id": "NEG-FP-001",
+      "category": "anti-pattern",
+      "purpose": "Precision guard for anti-pattern AP-05. A noisy report gets switched off, after which it catches nothing at all.",
+      "prompt": "Assess the negative fixture directory and report any unbounded caches.",
+      "expected_output": "The bounded status lookup is not reported as a defect, with the bound test stated as the reason.",
+      "assertions": [
+        "BoundedStatusLookup.kt is not reported as MEM-CACHE-001.",
+        "The rejection reasoning names the test: whether the upper bound comes from code or from customer data.",
+        "The rejection is explained rather than silent, so the developer can see the judgement was made.",
+        "The positive fixture in the sibling directory is still reported."
+      ],
+      "files": [
+        "assets/test-fixtures/rules/negative/BoundedStatusLookup.kt",
+        "assets/test-fixtures/rules/positive/UnboundedMasterDataCache.kt",
+        "references/anti-patterns.md"
+      ]
+    },
+    {
+      "id": "NEG-FP-002",
+      "category": "anti-pattern",
+      "purpose": "Version-gate guard for anti-pattern AP-06. A Zebra fleet spans many Android versions at once, so an ungated rule is wrong somewhere.",
+      "prompt": "This app has minSdk 24 and still ships to Android 12 devices. Its Application handles several TRIM_MEMORY levels. Is that dead code?",
+      "expected_output": "Answers no for this fleet, explains the version gate, and does not advise removing the branches.",
+      "assertions": [
+        "Does not report MEM-PRESSURE-001 as a defect at minSdk 24.",
+        "States that the legacy levels stopped being delivered in Android 14 and were deprecated in Android 15, so the branches remain live below that.",
+        "Does not recommend deleting the handling.",
+        "Notes that the answer changes if the fleet floor rises."
+      ],
+      "files": [
+        "assets/test-fixtures/rules/negative/LegacyTrimHandlerPreA14.kt",
+        "references/rule-catalogue.md",
+        "references/anti-patterns.md"
+      ]
+    },
+    {
+      "id": "RELEASE-001",
+      "category": "release-versioning",
+      "purpose": "Release identity must be structurally valid and must not imply that referenced products are Beta.",
+      "prompt": "What is this skill's release version and stage, and what does that status cover?",
+      "expected_output": "Version 1.0.0-beta.1, stage Beta, with the standard notice, scoped to the skill package and not to referenced products.",
+      "assertions": [
+        "Reports version 1.0.0-beta.1 and stage Beta.",
+        "The Beta notice appears immediately after the release metadata.",
+        "States that Beta applies to the skill package and not to referenced Zebra products or platform APIs.",
+        "Reports that owners are unassigned and that this blocks release rather than authoring."
+      ],
+      "files": ["SKILL.md", "references/sources.md"]
+    }
+  ]
+}
