@@ -1,3 +1,4 @@
+---
 name: appquality-memory-migration-android
 description: "Apply approved memory-reduction changes to an existing Android application for Zebra enterprise devices, one staged reversible step at a time, then verify the result in the same unit it was measured. Executes only developer-approved steps: streaming JSON parsing into Room, bounded caches, sampled bitmap decoding, lifecycle leak fixes, R8 and manifest configuration, Android 14+ trim handling, and MemoryLimiter kill detection via ApplicationExitInfo. Consumes a memory-plan.md when one is present, and works from developer-stated steps alone when it is not. Use when a memory plan or assessment already exists, or when a specific memory defect is known and a code change is wanted. Do not use to discover or quantify a footprint first (hand off to appquality-memory-assessment-android), for APK or download size reduction, for DataWedge or scanner configuration, or for CPU, battery or jank work."
 ---
